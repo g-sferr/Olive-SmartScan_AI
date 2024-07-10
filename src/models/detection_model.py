@@ -3,6 +3,12 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 
+import torch
+import torch.nn as nn
+
+def test():
+    print("hello")
+
 class OliveCNN(nn.Module):
     def __init__(self):
         super(OliveCNN, self).__init__()
@@ -13,9 +19,11 @@ class OliveCNN(nn.Module):
         self.conv5 = nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1)
         self.conv6 = nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
-        self.fc1 = nn.Linear(10 * 10 * 512, 1024)
-        self.fc2 = nn.Linear(1024, 512)
-        self.fc3 = nn.Linear(512, 1)
+        
+        # L'output per le coordinate delle bounding boxes e le probabilità
+        self.bbox_fc = nn.Linear(10 * 10 * 512, 4)  # 4 coordinate per ogni bounding box: x, y, w, h
+        self.conf_fc = nn.Linear(10 * 10 * 512, 1)  # 1 confidenza per ogni bounding box
+        
         self.relu = nn.ReLU()
         
     def forward(self, x):
@@ -26,7 +34,10 @@ class OliveCNN(nn.Module):
         x = self.pool(self.relu(self.conv5(x))) # 40 -> 20
         x = self.pool(self.relu(self.conv6(x))) # 20 -> 10
         x = x.view(-1, 10 * 10 * 512) # Flatten
-        x = self.relu(self.fc1(x))
-        x = self.relu(self.fc2(x))
-        x = self.fc3(x) # Output layer
-        return x
+        
+        bbox = self.bbox_fc(x)
+        conf = torch.sigmoid(self.conf_fc(x))  # La confidenza è una probabilità, quindi usiamo sigmoid
+        
+        return bbox, conf
+
+
