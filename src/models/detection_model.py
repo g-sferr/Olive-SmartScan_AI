@@ -6,9 +6,6 @@ from torch.utils.data import DataLoader
 import torch
 import torch.nn as nn
 
-def test():
-    print("hello")
-
 class OliveCNN(nn.Module):
     def __init__(self):
         super(OliveCNN, self).__init__()
