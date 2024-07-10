@@ -1,5 +1,5 @@
 
-# Citrus-SmartScan_AI: CNN-Based Model for Obect Detection and Direct Regression Counting
+# Citrus-SmartScan_AI: CNN-Based Model for Object Detection and Direct Regression Counting
 
 Intelligent Systems Project at University of Pisa - MSc Computer Engineering
 
