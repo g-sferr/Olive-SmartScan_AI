@@ -2,12 +2,11 @@
 import torch
 import torch.nn as nn
 import torchvision.models as models
-from object_detection import OliveDetector
-from counting import OliveCounter
-from utils import load_data, visualize_predictions
+from src.models.detection_model import test
 
 def main():
     #Code for test functions of the module
+    ''' 
     data_dir = 'path/to/data'
     dataloader = load_data(data_dir)
 
@@ -38,6 +37,8 @@ def main():
                 print(f'Count: {count.item()}')
 
             visualize_predictions(inputs[0], high_conf_boxes, None)
+            '''
+    test()
 
 
 if __name__ == '__main__':
