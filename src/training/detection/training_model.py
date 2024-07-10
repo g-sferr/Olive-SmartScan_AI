@@ -13,6 +13,9 @@ def training_steps(model, dataloader, criterion_bbox, optimizer, device, num_epo
         model.train()
         running_loss = 0.0
         for inputs, bboxes in dataloader:
+            #print(inputs)
+            #print("*******************************************")
+            #print(bboxes)
 
             # Trasferisci i tensori al dispositivo (CPU o GPU)
             inputs = inputs.to(device)
@@ -32,7 +35,7 @@ def training_steps(model, dataloader, criterion_bbox, optimizer, device, num_epo
 
 def start_train():
     # ---------- DATA ACQUISITION & DATA PRE-PROCESSING ----------
-    data_dir = '../../../datasets/processed/train_set/'
+    data_dir = 'datasets/processed/train_set/'
     datasetLoader = OliveDatasetLoader(data_dir)
     dataloader = DataLoader(datasetLoader, batch_size=32, shuffle=True)
     
