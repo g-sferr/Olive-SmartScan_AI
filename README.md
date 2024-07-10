@@ -28,5 +28,5 @@ You can find out more details by reading the final Paper on the [Citrus-SmartSca
 ## Authors
 
 * Gaetano Sferrazza - *e-mail*: g.sferrazza@studenti.unipi.it - *GitHub Profile*: [ [@g-sferr](https://github.com/g-sferr) ]
-* Francesco Bruno - *e-mail*: n.riccardi1@studenti.unipi.it - *GitHub Profile*: [ [@francescoB1997](https://github.com/francescoB1997) ]
+* Francesco Bruno - *e-mail*: f.bruno10@studenti.unipi.it - *GitHub Profile*: [ [@francescoB1997](https://github.com/francescoB1997) ]
 
