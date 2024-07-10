@@ -16,12 +16,12 @@ class OliveDatasetLoader(Dataset):
     def _load_data(self):
         base_dir = os.path.abspath(self.data_dir)
         images_dir = os.path.join(base_dir, 'images')
-        annotations_dir = os.path.join(base_dir, 'annotations')
+        labels_dir = os.path.join(base_dir, 'labels')
 
         for image_file in os.listdir(images_dir):
             if image_file.endswith('.jpg') or image_file.endswith('.png'):
                 image_path = os.path.join(images_dir, image_file)
-                annotation_path = os.path.join(annotations_dir, os.path.splitext(image_file)[0] + '.txt')
+                annotation_path = os.path.join(labels_dir, os.path.splitext(image_file)[0] + '.txt')
 
                 # Carica l'immagine
                 image = Image.open(image_path).convert('RGB')
