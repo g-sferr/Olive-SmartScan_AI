@@ -6,6 +6,8 @@ from torch.utils.data import DataLoader
 import torch
 import torch.nn as nn
 
+# MODELLO DA RIGUARDARE -> L'output qui è solamente una BoundingBox per immagine. 10/07/2024
+# Il modello corretto deve dare in uscita un numero MASSIMO di boundingBoxes, che noi imponiamo essere uguale alla media belle boundingBoxes di tutto il dataset
 class OliveCNN(nn.Module):
     def __init__(self):
         super(OliveCNN, self).__init__()
