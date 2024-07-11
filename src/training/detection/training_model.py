@@ -49,8 +49,13 @@ def training_steps(model, dataloader, criterion_bbox, optimizer, device, num_epo
             # Trasferisci i tensori al dispositivo (CPU o GPU)
             inputs = inputs.to(device)
             bboxes = [bbox.to(device) for bbox in bboxes]
+            
+            outputBatchBBoxes, outputBatchConfs = model(inputs)
 
-            outputs_bboxes = model(inputs)
+            confidence = 0
+            filteredBatchBBoxes, filteredBatchConfs = model.filter_bboxes(outputBatchBBoxes, outputBatchConfs, confidence)
+            
+            #print(f"XX {outputBatchConfs}")
             #loss = criterion_bbox(outputs_bboxes, bboxes)
             #optimizer.zero_grad()
             #loss.backward()
@@ -58,14 +63,21 @@ def training_steps(model, dataloader, criterion_bbox, optimizer, device, num_epo
             #running_loss += loss.item()
 
             loss_bbox = 0
-            for output, target in zip(outputs_bboxes, bboxes):
-                count = 0
-                print(f"output.size(): {output.size()} | target.size(): {target.size()}")
-                
+            #for outputBBox, target in zip(outputs_bboxes, bboxes):
+            count = 0
+            for BBoxesOneImage in filteredBatchBBoxes:
+                print(f"Foto: {count} | output: {BBoxesOneImage.size()}")
+                for singleBBox in BBoxesOneImage:
+                    x, y, w, h = singleBBox
+                    print(f"x={x}, y={y}, w={w}, h={h}")
+                count+=1
+
+
+                '''
                 #Parte di codice da ridefinire meglio quando si sceglie l'architettura del modello
                 
-                if output.size() == target.size():
-                    loss = criterion_bbox(output, target)
+                if outputBBox.size() == target.size():
+                    loss = criterion_bbox(outputBBox, target)
                     count += 1
                 #if count > 0:
                 #    loss /= count
@@ -76,6 +88,7 @@ def training_steps(model, dataloader, criterion_bbox, optimizer, device, num_epo
                     #lossValue = loss.double()
                     loss_bbox += loss.item()#lossValue  # Ottieni il valore numerico della perdita
                     print(f"loss_bbox: {loss_bbox}")
+                '''
 
             running_loss += loss_bbox * inputs.size(0)
 
@@ -110,7 +123,7 @@ def start_train():
     # ---------- DATA PROCESSING ----------
     # Inizializzazione del modello
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model = OliveCNN()
+    model = OliveCNN(5) # Max 5 BoundingBoxes predette
     model = model.to(device)
 
     # Definizione della loss function e dell'ottimizzatore
@@ -120,7 +133,7 @@ def start_train():
     
     training_steps(model, dataloader, criterion_bbox, optimizer, device, num_epochs=10)
 
-    torch.save(model.state_dict(), '../../../final_models/checkpoints/best_detection_model.pth')
+    torch.save(model.state_dict(), 'final_models/checkpoints/best_detection_model.pth')
 
 def module_tester():
     # Codice per testare le funzioni del modulo
