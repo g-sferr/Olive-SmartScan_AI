@@ -14,12 +14,12 @@ def collate_fn(batch):
     images = torch.stack(images, dim=0)
     
     # Create list of bounding boxes
-    bboxes = [bbox for bbox in bboxes]
+    # bboxes = [bbox for bbox in bboxes]
 
-    return images, bboxes
+    return images, list(bboxes)
 
 # Funzione di addestramento
-def training_steps(model, dataloader, criterion_bbox, optimizer, device, num_epochs=25):
+def training_steps(model, dataloader, testSetloader, criterion_bbox, optimizer, device, num_epochs=25):
     for epoch in range(num_epochs):
         model.train()
         running_loss = 0.0
@@ -42,6 +42,14 @@ def training_steps(model, dataloader, criterion_bbox, optimizer, device, num_epo
             optimizer.step()
             running_loss += loss.item() * inputs.size(0)
         
+        acc = 0
+        count = 0
+        for inputs, labels in testSetloader:
+            y_pred = model(inputs)
+            acc += (torch.argmax(y_pred, 1) == labels).float().sum()
+            count += len(labels)
+        acc /= count
+        print("Epoch %d: model accuracy %.2f%%" % (epoch, acc*100))
         epoch_loss = running_loss / len(dataloader.dataset)
         print(f'Epoch {epoch+1}/{num_epochs}, Loss: {epoch_loss:.4f}')
 
@@ -49,7 +57,11 @@ def start_train():
     # ---------- DATA ACQUISITION & DATA PRE-PROCESSING ----------
     data_dir = 'datasets/processed/train_set/'
     datasetLoader = OliveDatasetLoader(data_dir)
-    dataloader = DataLoader(datasetLoader, batch_size=32, shuffle=True, collate_fn=collate_fn)
+    dataloader = DataLoader(datasetLoader, batch_size=16, shuffle=True, collate_fn=collate_fn)
+    # ---------- DATA ACQUISITION & DATA PRE-PROCESSING ----------
+    data_dir = 'datasets/processed/test_set/'
+    datasetLoader = OliveDatasetLoader(data_dir)
+    testSetloader = DataLoader(datasetLoader, batch_size=16, shuffle=True, collate_fn=collate_fn)
     
     # ---------- DATA PROCESSING ----------
     # Inizializzazione del modello
@@ -61,9 +73,9 @@ def start_train():
     criterion_bbox = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     
-    training_steps(model, dataloader, criterion_bbox, optimizer, device, num_epochs=25)
+    training_steps(model, dataloader, testSetloader, criterion_bbox, optimizer, device, num_epochs=25)
 
-    torch.save(model.state_dict(), '../../../final_models/checkpoints/best_detection_model.pth')
+    torch.save(model.state_dict(), 'final_models/checkpoints/best_detection_model.pth')
 
 def module_tester():
     # Codice per testare le funzioni del modulo
