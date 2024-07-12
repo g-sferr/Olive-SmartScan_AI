@@ -29,20 +29,25 @@ class OliveDatasetLoader(Dataset):
                 self.images.append(image)
 
                 # Carica l'annotazione
+                #print(f"NomeFile-> {image_file}")
                 bboxes = self._load_labels(labels_file) # Carico le labels di quella specifica immagine
                 self.bboxes.append(bboxes)
-                # self.confs.append(confs)
+                # self._class.append(_class)
 
     def _load_labels(self, labels_file):
         bboxes = []
-        # confs = []
+        # _class = []
         with open(labels_file, 'r') as file:
             lines = file.readlines()
             for line in lines:
-                conf, x1, y1, x2, y2 = map(float, line.strip().split())
+                try:
+                    _class, x1, y1, x2, y2 = map(float, line.strip().split())
+                except:
+                    print(f"File non corretto: {labels_file}")
+                    break
                 bboxes.append([x1, y1, x2, y2])
-                # confs.append(conf)
-        return torch.tensor(bboxes, dtype=torch.float32) # torch.tensor(confs, dtype=torch.float32)
+                # _class.append(conf)
+        return torch.tensor(bboxes, dtype=torch.float32) # torch.tensor(_class, dtype=torch.float32)
 
     def _transform_image(self, image):
         # Trasforma l'immagine (ridimensionamento, normalizzazione, ecc.)

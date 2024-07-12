@@ -49,16 +49,13 @@ class OliveCNN(nn.Module):
             temp_filtered_confs = []
 
             for singleBBox, signleConf in zip(BBoxesOneImage, ConfsOneImage):
-                if 1: #signleConf > conf_threshold:
-                    temp_filtered_bboxes.append(singleBBox)
-                    temp_filtered_confs.append(signleConf)
+                if signleConf > conf_threshold:
+                    temp_filtered_bboxes.append(singleBBox[:4].tolist())
+                    temp_filtered_confs.append(signleConf.item())
             filtered_bboxes.append(temp_filtered_bboxes)
             filtered_confs.append(temp_filtered_confs)
-
-        #DA RISOLVERE
-        filtered_bboxes = torch.stack(filtered_bboxes)
-        filtered_confs = torch.stack(filtered_confs)
-        return  filtered_bboxes,  
+            
+        return  torch.tensor(filtered_bboxes, dtype=torch.float32),  torch.tensor(filtered_confs, dtype=torch.float32)
 
 
 '''
