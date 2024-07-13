@@ -10,6 +10,7 @@ from src.models.detection_model import OliveCNN  # Classe che definisce il model
 from src.models.alternativeModel import AlternativeModel
 from src.data_management.data_acquisition import OliveDatasetLoader 
 from torch.utils.data import DataLoader
+from torchvision.ops import box_iou
 
 class CustomMSELoss(nn.Module): # Classe Da Eliminare 10/07/2024
     def __init__(self):
@@ -50,12 +51,13 @@ def training_steps(model, dataloader, testloader, loss_criterion, optimizer, dev
         for inputs, targetBBoxes in dataloader:
             # Trasferisci i tensori al dispositivo (CPU o GPU)
             inputs = inputs.to(device)
-            #targetBBoxes = [bboxes.to(device) for bboxes in targetBBoxes]
+            targetBBoxes = [bboxes.to(device) for bboxes in targetBBoxes]
 
             outputBatchBBoxes, outputBatchConfs = model(inputs)
             
-            confidence = 0.2
+            confidence = 0
             filteredBatchBBoxes, filteredBatchConfs = model.filter_bboxes(outputBatchBBoxes, outputBatchConfs, confidence)
+            filteredBatchBBoxes = filteredBatchBBoxes.to(device)
             #print(f"filteredBatchBBoxes.size(): {filteredBatchBBoxes.size()}")
             ''' STAMPA
             for BBoxesOneImage, ConfsOneImage in zip(filteredBatchBBoxes, filteredBatchConfs):
@@ -64,6 +66,7 @@ def training_steps(model, dataloader, testloader, loss_criterion, optimizer, dev
                     x, y, w, h = singleBBox
                     print(f"x={x}, y={y}, w={w}, h={h} | Conf: {confBBox}")
                 count+=1
+            '''
             '''
             for targetBoxesOneImage in targetBBoxes :
                 #targetBoxesOneImageAsTensor = torch.tensor(targetBoxesOneImage, dtype=torch.float32) # --> tensor(NBoundingBoxes, 4) : [ [x1, y1, w1, h1], [x2, y2, w2, h2] ... ]
@@ -86,11 +89,48 @@ def training_steps(model, dataloader, testloader, loss_criterion, optimizer, dev
 
                     #print(f"CONTROPROVA: filtSizeCPY={filteredBBoxesOneImageCPY.size()} | targetSizeCPY: {targetBoxesOneImageAsTensorCPY.size()}")
                     
-                    committedError = loss_criterion(filteredBBoxesOneImageCPY, targetBoxesOneImageAsTensorCPY)
+                    committedError = loss_criterion(filteredBBoxesOneImageCPY, targetBoxesOneImageAsTensorCPY)                    
                     optimizer.zero_grad()
                     committedError.backward()
                     optimizer.step()
+
                     running_loss += committedError.item() * inputs.size(0)
+            '''
+            loss = 0.0
+            for filteredBBoxesOneImage in filteredBatchBBoxes:
+                for targetBoxesOneImage in targetBBoxes :
+                    committedErrorTensor = loss_criterion(filteredBBoxesOneImage, targetBoxesOneImage)
+                    optimizer.zero_grad()
+                    loss += committedErrorTensor.item()
+                    optimizer.step()
+
+            loss.backward()
+            '''
+            for targetBoxesOneImage in targetBBoxes :
+                for filteredBBoxesOneImage in filteredBatchBBoxes:
+                    committedErrorTensor = loss_criterion(filteredBBoxesOneImage.detach().requires_grad_(True), targetBoxesOneImage.detach().requires_grad_(True))            
+                    
+                    for committedError in committedErrorTensor:
+                        for signleCommittedError in committedError:
+                            signleCommittedError.detach().requires_grad_(True).backward()
+                            
+                    
+
+            '''
+            '''
+                     for singleTargetBB in targetBoxesOneImage:
+                         for singleFilteredBB in filteredBBoxesOneImage:
+                            singleTargetBB = singleTargetBB.detach().requires_grad_(True).unsqueeze(0)
+                            singleFilteredBB = singleFilteredBB.detach().requires_grad_(True).unsqueeze(0)
+                            #committedError = loss_criterion(singleTargetBB.detach().requires_grad_(True), singleFilteredBB.detach().requires_grad_(True))            
+                            committedError = loss_criterion(singleTargetBB, singleFilteredBB)            
+                            optimizer.zero_grad()
+                            committedError.backward()
+                            optimizer.step()
+
+                            running_loss += committedError.item() * inputs.size(0)
+                    '''
+
 
                     
         '''
@@ -126,9 +166,9 @@ def start_train():
     #model = OliveCNN(3) # Max 5 BoundingBoxes predette
     model = AlternativeModel(3)
     model = model.to(device)
-
+    criterion_bbox = box_iou #nn.MSELoss()
     # Definizione della loss function e dell'ottimizzatore
-    criterion_bbox = nn.MSELoss()
+    
     
     optimizer = optim.Adam(model.parameters(), lr=0.01)
     
