@@ -3,6 +3,7 @@ import os
 from PIL import Image
 import torch
 import torchvision
+from tqdm import tqdm
 
 # Esempio di dataset personalizzato
 class OliveDatasetLoader(Dataset):
@@ -18,8 +19,11 @@ class OliveDatasetLoader(Dataset):
         images_dir = os.path.join(base_dir, 'images')
         labels_dir = os.path.join(base_dir, 'labels')
 
-        for image_file in os.listdir(images_dir): # ForEach img in directory...
-            if image_file.endswith('.jpg') or image_file.endswith('.png'):
+        image_files = [f for f in os.listdir(images_dir) if f.endswith('.jpg') or f.endswith('.png')]
+        total_images = len(image_files)
+
+        # Usa tqdm per la progress bar
+        for image_file in tqdm(image_files, desc="Loading dataset", unit="image"):
                 image_path = os.path.join(images_dir, image_file)
                 labels_file = os.path.join(labels_dir, os.path.splitext(image_file)[0] + '.txt')
 
