@@ -1,7 +1,6 @@
 import sys
 import os
 import torch
-import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchvision
@@ -10,35 +9,13 @@ from src.models.detection_model import OliveCNN  # Classe che definisce il model
 from src.models.alternativeModel import AlternativeModel
 from src.data_management.data_acquisition import OliveDatasetLoader 
 from torch.utils.data import DataLoader
-
-class CustomMSELoss(nn.Module): # Classe Da Eliminare 10/07/2024
-    def __init__(self):
-        super(CustomMSELoss, self).__init__()
-        self.mse_loss = nn.MSELoss()
-
-    def forward(self, outputs, targets):
-        loss = 0
-        for output, target in zip(outputs, targets):
-            if output.size() == target.size():
-                loss += self.mse_loss(output, target)
-
-        tot = len(outputs)
-        if tot != 0:
-            return loss / len(outputs)
-        return loss
-    
-    def backward(self):
-        self.backward()
+from tqdm import tqdm
+from evaluate_model import test_training_accuracy
 
 def collate_fn(batch):
     images, bboxes = zip(*batch)
-    
     # Stack images (images are already tensors of the same shape)
     images = torch.stack(images, dim=0)
-    
-    # Create list of bounding boxes
-    #bboxes = [bbox for bbox in bboxes]
-
     return images, list(bboxes)
 
 
@@ -47,92 +24,108 @@ def training_steps(model, dataloader, testloader, loss_criterion, optimizer, dev
     for epoch in range(num_epochs):
         model.train()
         running_loss = 0.0
-        for inputs, targetBBoxes in dataloader:
+
+        # tqdm per il ciclo di avanzamento
+        progress_bar = tqdm(enumerate(dataloader), total=len(dataloader), desc=f"Epoch {epoch+1}")
+
+        for batch_idx, (inputs, targetBBoxes) in progress_bar:
             # Trasferisci i tensori al dispositivo (CPU o GPU)
             inputs = inputs.to(device)
-            #targetBBoxes = [bboxes.to(device) for bboxes in targetBBoxes]
+            targetBBoxes = [bboxes.to(device) for bboxes in targetBBoxes]
 
+            # Forward pass
             outputBatchBBoxes, outputBatchConfs = model(inputs)
-            
+
+            # Filtro basato sulla confidenza
             confidence = 0.2
             filteredBatchBBoxes, filteredBatchConfs = model.filter_bboxes(outputBatchBBoxes, outputBatchConfs, confidence)
-            #print(f"filteredBatchBBoxes.size(): {filteredBatchBBoxes.size()}")
-            ''' STAMPA
-            for BBoxesOneImage, ConfsOneImage in zip(filteredBatchBBoxes, filteredBatchConfs):
-                print(f"Foto: {count} | output: {BBoxesOneImage.size()}")
-                for singleBBox, confBBox in zip(BBoxesOneImage, ConfsOneImage):
-                    x, y, w, h = singleBBox
-                    print(f"x={x}, y={y}, w={w}, h={h} | Conf: {confBBox}")
-                count+=1
-            '''
-            for targetBoxesOneImage in targetBBoxes :
-                #targetBoxesOneImageAsTensor = torch.tensor(targetBoxesOneImage, dtype=torch.float32) # --> tensor(NBoundingBoxes, 4) : [ [x1, y1, w1, h1], [x2, y2, w2, h2] ... ]
-                for filteredBBoxesOneImage in filteredBatchBBoxes:
-                    targetBoxesOneImageAsTensorCPY = targetBoxesOneImage.clone().detach().requires_grad_(True)
-                    filteredBBoxesOneImageCPY = filteredBBoxesOneImage.clone().detach().requires_grad_(True)
-                    sizeTargetBBoxes = targetBoxesOneImageAsTensorCPY.size(0)
-                    sizeFilteredBBoxes = filteredBBoxesOneImage.size(0)
+            filteredBatchBBoxes = [fbboxes.to(device) for fbboxes in filteredBatchBBoxes]
+            
+            batch_loss = 0.0
+            for i in range(len(inputs)):
+                targetBoxesOneImage = targetBBoxes[i]
+                filteredBBoxesOneImage = filteredBatchBBoxes[i]
 
-                    if sizeTargetBBoxes > sizeFilteredBBoxes:
-                        #print("sizeTargetBBoxes > sizeFilteredBBoxes:")
-                        filteredBBoxesOneImageCPY = torch.zeros(sizeTargetBBoxes, 4, dtype=torch.float32)
-                        filteredBBoxesOneImageCPY[:sizeFilteredBBoxes, :filteredBBoxesOneImage.size(1)] = filteredBBoxesOneImage # Dopo, i due tensor hanno stessa size
-                        #print(f"filteredBBoxesOneImage.size: {filteredBBoxesOneImage.size()} | targetBoxesOneImage.size(): {targetBoxesOneImage.size()}")
-                    elif sizeFilteredBBoxes > sizeTargetBBoxes :
-                        #print("sizeFilteredBBoxes > sizeTargetBBoxes :")
-                        targetBoxesOneImageAsTensorCPY = torch.zeros(sizeFilteredBBoxes, 4, dtype=torch.float32)
-                        targetBoxesOneImageAsTensorCPY[:sizeTargetBBoxes, :targetBoxesOneImage.size(1)] = targetBoxesOneImage # Dopo, i due tensor hanno stessa size
-                        #print(f"filteredBBoxesOneImage.size: {filteredBBoxesOneImage.size()} | targetBoxesOneImageAsTensor.size(): {targetBoxesOneImage.size()}")
+                sizeTargetBBoxes = targetBoxesOneImage.size(0)
+                sizeFilteredBBoxes = filteredBBoxesOneImage.size(0)
 
-                    #print(f"CONTROPROVA: filtSizeCPY={filteredBBoxesOneImageCPY.size()} | targetSizeCPY: {targetBoxesOneImageAsTensorCPY.size()}")
-                    
-                    committedError = loss_criterion(filteredBBoxesOneImageCPY, targetBoxesOneImageAsTensorCPY)
-                    optimizer.zero_grad()
-                    committedError.backward()
-                    optimizer.step()
-                    running_loss += committedError.item() * inputs.size(0)
+                if sizeTargetBBoxes > sizeFilteredBBoxes:
+                    # Pad filteredBBoxesOneImage to match targetBoxesOneImage size
+                    paddedFilteredBBoxesOneImage = torch.zeros(sizeTargetBBoxes, 4, device=device)
+                    paddedFilteredBBoxesOneImage[:sizeFilteredBBoxes, :4] = filteredBBoxesOneImage
+                    filteredBBoxesOneImage = paddedFilteredBBoxesOneImage.detach().requires_grad_(True)
+                elif sizeFilteredBBoxes > sizeTargetBBoxes:
+                    # Pad targetBoxesOneImage to match filteredBBoxesOneImage size
+                    paddedTargetBoxesOneImage = torch.zeros(sizeFilteredBBoxes, 4, device=device)
+                    paddedTargetBoxesOneImage[:sizeTargetBBoxes, :4] = targetBoxesOneImage
+                    targetBoxesOneImage = paddedTargetBoxesOneImage.detach().requires_grad_(True)
 
-                    
-        '''
-        acc = 0
-        count = 0
-        for inputNeverSeen, labels in testloader:
-            print(f"")
-            #outputBatchBBoxes, outputBatchConfs = model(inputs)
-            #acc += (torch.argmax(y_pred, 1) == labels).float().sum()
-            #count += len(labels)
-        acc /= count
-        print("Epoch %d: model accuracy %.2f%%" % (epoch, acc*100)) 
-        '''
-        epoch_loss = running_loss / len(dataloader.dataset)
-        print(f'Epoch {epoch+1}/{num_epochs}, Loss: {epoch_loss:.4f}')
+                # Calcolo della perdita
+                committedError = loss_criterion(filteredBBoxesOneImage, targetBoxesOneImage)
+                batch_loss += committedError
+
+            optimizer.zero_grad()
+            batch_loss.backward()
+            optimizer.step()
+            running_loss += batch_loss.item()
+
+            # Aggiornamento della descrizione della barra di progresso con la loss corrente
+            progress_bar.set_postfix(batch_idx=batch_idx, loss=batch_loss.item())
+
+        epoch_loss = running_loss / len(dataloader)
+
+        # Calcolo dell'accuratezza
+        if testloader is not None:
+            acc = 0 # accumulerà la somma delle previsioni corrette
+            count = 0 # tiene traccia del numero totale di campioni
+            for inputs, labels in testloader:
+                inputs = inputs.to(device)
+                labels = [bboxes.to(device) for bboxes in labels] #labels.to(device)
+                output_pred, output_confs = model(inputs)
+                acc += (torch.argmax(output_pred, 1) == labels).float().sum().item() # trova l'indice della previsione più alta per ogni campione
+                count += len(labels)
+            acc /= count # calcolo dell'accuratezza media
+            print(f'Epoch {epoch+1}: model accuracy {acc*100:.2f}%')
+        
+        print("")
+        print(f'Total Loss for Epoch {epoch+1}/{num_epochs}:  {epoch_loss:.4f}')
+        print("------------------------------------------------------------------------------------------------------------------------")
+
+        
     
-
-
 
 def start_train():
     # ---------- DATA ACQUISITION & DATA PRE-PROCESSING ----------
+    print("")
+    print('[ Step (1): ********** Path Scanning for "train_set" data ********** ]')
     data_dir = 'datasets/processed/train_set/'
     datasetLoader = OliveDatasetLoader(data_dir)
-    dataloader = DataLoader(datasetLoader, batch_size=16, shuffle=True, collate_fn=collate_fn)
+    dataloader = DataLoader(datasetLoader, batch_size=8, shuffle=True, collate_fn=collate_fn)
+    print("")
+    print("[ Step (2): ********** DATASET LOADED ********** ]")
+    print("")
     
     #data_dir = 'datasets/processed/test_set/'
     #datasetLoader = OliveDatasetLoader(data_dir)
     #testloader = DataLoader(datasetLoader, batch_size=16, shuffle=True, collate_fn=collate_fn)
     # ---------- DATA PROCESSING ----------
     # Inizializzazione del modello
-    print(f"CUDA AVAILABLE ? -> {torch.cuda.is_available()}")
+    print(f"( --- RESPONSE CHECK CUDA DEVICE AVAILABILITY:  {torch.cuda.is_available()} --- )")
+    print("")
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cpu")
     #model = OliveCNN(3) # Max 5 BoundingBoxes predette
     model = AlternativeModel(3)
     model = model.to(device)
+    print("[ Step (3): ********** MODEL TRANSFERRED ON GPU DEVICE ********** ]")
+    print("")
 
     # Definizione della loss function e dell'ottimizzatore
     criterion_bbox = nn.MSELoss()
     
     optimizer = optim.Adam(model.parameters(), lr=0.01)
     
-    training_steps(model, dataloader, None , criterion_bbox, optimizer, device, num_epochs = 30)
+    training_steps(model, dataloader, None , criterion_bbox, optimizer, device, num_epochs = 10)
 
     model_out_dir = os.path.abspath('final_models/checkpoints/best_detection_model.pth')
     torch.save(model.state_dict(), model_out_dir)
