@@ -11,7 +11,6 @@ from src.models.alternativeModel import AlternativeModel
 from src.data_management.data_acquisition import OliveDatasetLoader 
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from evaluate_model import test_training_accuracy
 
 def collate_fn(batch):
     images, bboxes = zip(*batch)
@@ -23,7 +22,7 @@ def collate_fn(batch):
 def training_steps(model, dataloader, testloader,
                    loss_criterion, optimizer, device, num_epochs, accumulate=1):
 
-    scaler = GradScaler()
+    #scaler = GradScaler()
     last_opt_step = 0
     ni = 0
 
@@ -38,7 +37,7 @@ def training_steps(model, dataloader, testloader,
             # Trasferisci i tensori al dispositivo (CPU o GPU)
             inputs = inputs.to(device)
             targetBBoxes = [bboxes.to(device) for bboxes in targetBBoxes]
-
+            
             # Avvio del contesto autocast per precisione mista
             with autocast():
                 # Forward pass
@@ -74,23 +73,15 @@ def training_steps(model, dataloader, testloader,
                     batch_loss += committedError
 
             # Scaling dei gradienti e backward pass
-            scaler.scale(batch_loss).backward()
+            batch_loss.backward()
             
             ni += 1  # Incrementa il contatore globale dei passi
-            if ni - last_opt_step >= accumulate or (batch_idx + 1) == len(dataloader):  # Check per aggiornamento dell'ottimizzatore
-                scaler.unscale_(optimizer)  # Unscale dei gradienti
+            if ((ni - last_opt_step) >= accumulate) or ((batch_idx + 1) == len(dataloader)):  # Check per aggiornamento dell'ottimizzatore
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=10.0)  # Clip dei gradienti
-                if torch.isnan(batch_loss).any() or torch.isinf(batch_loss).any():
-                    # Gestione di NaN o inf nel loss
-                    print(f"NaN or inf detected in loss. Skipping batch {batch_idx}.")
-                    scaler.update()  # Aggiorna il GradScaler per evitare accumulo degli errori
-                    optimizer.zero_grad()  # Azzeramento dei gradienti
-                    continue  # Skip this batch
-                scaler.step(optimizer)  # Aggiornamento dell'ottimizzatore
-                scaler.update()  # Aggiornamento del GradScaler
-                optimizer.zero_grad()  # Azzeramento dei gradienti
+                optimizer.step()
+                optimizer.zero_grad()                
 
-                last_opt_step += batch_idx + 1
+                last_opt_step = ni
 
             running_loss += batch_loss.item()
 
@@ -116,14 +107,12 @@ def training_steps(model, dataloader, testloader,
         print(f'Total Loss for Epoch {epoch+1}/{num_epochs}:  {epoch_loss:.4f}')
         print("------------------------------------------------------------------------------------------------------------------------")
 
-        
-    
 
 def start_train():
     # ---------- DATA ACQUISITION & DATA PRE-PROCESSING ----------
     print("")
     print('[ Step (1): ********** Path Scanning for "train_set" data ********** ]')
-    batch_size = 8
+    batch_size = 16
     data_dir = 'datasets/processed/train_set/'
     datasetLoader = OliveDatasetLoader(data_dir)
     dataloader = DataLoader(datasetLoader, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
@@ -149,13 +138,13 @@ def start_train():
     # Definizione della loss function e dell'ottimizzatore
     criterion_bbox = nn.MSELoss()
     # Optimizer with batch tuning
-    nominal_batch_size = 16 # nominal batch size: 
+    nominal_batch_size = 32 # nominal batch size: 
     accumulate = max(round(nominal_batch_size / batch_size), 1)  # accumulate loss before optimizing
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     
     training_steps(model, dataloader, None ,
                    criterion_bbox, optimizer, device,
-                   num_epochs = 15, accumulate=accumulate)
+                   num_epochs = 100, accumulate=accumulate)
 
     model_out_dir = os.path.abspath('final_models/checkpoints/detection_model.pth')
     torch.save(model.state_dict(), model_out_dir)

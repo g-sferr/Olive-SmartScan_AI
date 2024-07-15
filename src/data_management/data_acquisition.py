@@ -43,14 +43,18 @@ class OliveDatasetLoader(Dataset):
         # _class = []
         with open(labels_file, 'r') as file:
             lines = file.readlines()
+            NoLine = True
             for line in lines:
                 try:
                     _class, x1, y1, x2, y2 = map(float, line.strip().split())
+                    NoLine = False
                 except:
                     print(f"File non corretto: {labels_file}")
                     break
                 bboxes.append([x1, y1, x2, y2])
                 # _class.append(conf)
+            if NoLine:
+                print(f"NoLine --> {labels_file}")
         return torch.tensor(bboxes, dtype=torch.float32) # torch.tensor(_class, dtype=torch.float32)
 
     def _transform_image(self, image):
