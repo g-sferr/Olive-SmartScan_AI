@@ -1,0 +1,11 @@
+Prendere il Dataset e dividere le foto per caratteristiche:
+-] Olive a terra   (tipo A)
+-] Olive su mano   (tipo B)
+-] Olive su albero (tipo C)
+-] Solo oliva      (tipo D)
+
+Esempio:
+Abbiamo un dataset di 1000 foto, 300 di tipoA, 300 di tipoB, e 300 di tipoC facciamo una Cross validation in cui
+manteniamo questa distribuzione uniforme.
+Una volta fatto il training, mostriamo alla rete il TestSet e valutiamo per ogni tipo come si comporta la rete.
+
