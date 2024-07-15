@@ -18,7 +18,8 @@ def main():
     detector.eval()
     counter.eval()
 
-    # Modifica del commento test fatto da gaetano
+    # Modifica del commento test fatto da gaetano.
+    # Rimodificato da gaetano
 
     for inputs, _ in dataloader:
         with torch.no_grad():
