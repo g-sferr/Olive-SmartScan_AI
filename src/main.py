@@ -18,6 +18,8 @@ def main():
     detector.eval()
     counter.eval()
 
+    # Normalizza le coordinate delle bounding boxes # Normalizza le coordinate delle bounding boxes
+
     for inputs, _ in dataloader:
         with torch.no_grad():
             detections = detector(inputs)
