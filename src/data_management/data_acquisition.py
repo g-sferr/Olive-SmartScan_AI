@@ -74,6 +74,8 @@ class OliveDatasetLoader(Dataset):
         bbox = self.bboxes[idx]
         # conf = self.confs[idx]
         return image, bbox # conf
+    
+    # Commento test
 
 def module_tester():
     #Code for test functions of the module
