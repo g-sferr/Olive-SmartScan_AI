@@ -31,7 +31,7 @@ Avendo costruito a modo il dataset, fate le analisi in crossValidation e poi tal
 considerando i 3 scenari differenti.
 
 Definite in modo formale il vostro Task:
-IL task è Riconoscere e Contare in X scenari differenti. -->Quindi, dovete anche calcolare l'errore MEDIO che commette
+IL task è Riconoscere e Contare in X scenari differenti. --> Quindi, dovete anche calcolare l'errore MEDIO che commette
 la rete sul contare.
 
 Soluzione: Prendere una Yolo già addestrata, ma come la FineTunate?
