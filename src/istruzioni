@@ -9,3 +9,42 @@ Abbiamo un dataset di 1000 foto, 300 di tipoA, 300 di tipoB, e 300 di tipoC facc
 manteniamo questa distribuzione uniforme.
 Una volta fatto il training, mostriamo alla rete il TestSet e valutiamo per ogni tipo come si comporta la rete.
 
+Per quanto riguarda le immagini delle olive sull'albero, costruite un altro modello in grado di riconoscere anche
+l'albero, e poi sull'albero riconosciuto le olive.
+Vi servono quindi 2 classi, ALBERO e OLIVE.
+
+Istruzioni Fined-CrossValidation
+Prendi il dataset e dividete le foto in base ai diversi scenari delle olive e descrivetelo. Questa divisione serve solo
+per una valutazione a valle.
+Il trainignSet rimane intero però il prof consiglia di dividerlo in Categorie. Così quando poi facciamo la crossValidation
+siamo sicuri che in goni fold le varie categorie vengono rappresentate nella stessa maniera.
+SPIEGAZIONE:
+Supponiamo di avere 300 immagini di ogni categoria(3), quindi ho 900 immagini totali. -> Quando poi faccio la
+FineFoldCrossValidation, ogni fold avrà 900/5 = 180 immagini, quindi avremo 5 fold da 180.
+Visto che abbiamo 5 Fold da 180 immagini, queste 180 immagini visto che ho 3 categorie, dovranno essere 60 immagini per
+ogni categoria.
+A COSA STARE ATTENTI DURANTE LA CROSS_VALIDATION:
+QUINDI noi dobbiamo stare attenti che in ogni Fold (da 180) ci siano 60 foto di ogni categoria, quindi con una stessa
+distribuzione.
+
+Avendo costruito a modo il dataset, fate le analisi in crossValidation e poi tali analisi le fate
+considerando i 3 scenari differenti.
+
+Definite in modo formale il vostro Task:
+IL task è Riconoscere e Contare in X scenari differenti. -->Quindi, dovete anche calcolare l'errore MEDIO che commette
+la rete sul contare.
+
+Soluzione: Prendere una Yolo già addestrata, ma come la FineTunate?
+-] Prendete una yolo che è stata già addestrata a riconoscere es. 1000 oggetti, cambiate lo strato Softmax, vanno cambiati
+   la testa ma anche parte del collo... Quindi poi basterebbe anche la Sigmoide al posto della Softmax visto che dobbiamo
+   riconoscere solo un'oliva.
+-] Come gestite le epoche?
+-] Come gestite i Batch dei Dati?
+
+Come scegliere la versione di Yolo:
+-] Se utilizzando la versione 'n' di Yolo le olive sono troppo piccola, potete anche utilizzare una versione di Yolo5 più
+   complessa.
+-] Valutate l'errore massimo accettabile. Es. l'errore è intorno al 15% per una resa agricola è accettabile?
+-] Chiedere a MIGLIONICO quale versione di Yolo è migliore per oggetti piccoli(olive). CONTATTATE MIGLIONICO
+
+
