@@ -5,7 +5,7 @@ import shutil
 
 
 def renameFile():
-    directory = os.path.abspath('datasets/processed/train_set')
+    directory = os.path.abspath('datasets/processed/DatasetSoloAlberi')
     images_dir = os.path.join(directory, 'images')
     labels_dir = os.path.join(directory, 'labels')
 
@@ -25,11 +25,11 @@ def renameFile():
         print(f"img_name: {img_name} | lbl_name: {lbl_name} ")
         assert (img_name == lbl_name)
 
-        if img_name.__contains__("_olive"):
+        if img_name.__contains__("_tree"):
             continue
 
-        new_img_name = os.path.join(images_dir, f"{numeric_name}_olive{img_extension}")
-        new_lbl_name = os.path.join(labels_dir, f"{numeric_name}_olive{lbl_extension}")
+        new_img_name = os.path.join(images_dir, f"{numeric_name}_tree{img_extension}")
+        new_lbl_name = os.path.join(labels_dir, f"{numeric_name}_tree{lbl_extension}")
 
         os.rename( os.path.join(images_dir, image_files[i]), new_img_name)
         os.rename( os.path.join(labels_dir, label_files[i]), new_lbl_name)
@@ -37,11 +37,11 @@ def renameFile():
         #print(f"new_img_name: {new_img_name} | new_lbl_name: {new_lbl_name}")
 
 def copyOnlyLabelsFromImages():
-    destinationDir = os.path.abspath('datasets/processed/train_set')
+    destinationDir = os.path.abspath('datasets/processed/DatasetSoloAlberi')
     images_dest_dir = os.path.join(destinationDir, 'images')
-    labels_dest_dir = os.path.join(destinationDir, 'destLbl')
+    labels_dest_dir = os.path.join(destinationDir, 'destLabels')
 
-    sourceDir = os.path.abspath('datasets/processed/train_set/')
+    sourceDir = os.path.abspath('datasets/processed/DatasetSoloAlberi')
     source_labels_dir = os.path.join(sourceDir, 'labels')
 
     image_files = [f for f in os.listdir(images_dest_dir) if f.endswith('.jpg') or f.endswith('.png')]
@@ -68,10 +68,34 @@ def addCrownBBox():
             file.write('\n' + crownBBox)
             print(f"crownBBox added -> {label_files[i]}")
 
+def changeIDLablesOlive():
+    baseDir = os.path.abspath('datasets/processed/train_set')
+    labels_dir = os.path.join(baseDir, 'labels')
+
+    label_files = [f for f in os.listdir(labels_dir) if f.endswith('.txt')]
+
+    for label_file in label_files:
+        file_path = os.path.join(labels_dir, label_file)
+        
+        print("File com'era:")
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+            print(lines)
+        
+        # Modifica le righe che iniziano per '0 '
+        modified_lines = ['2' + line[1:] if line.startswith('0 ') else line for line in lines]
+        
+        print("File com'è adesso:")
+        with open(file_path, 'w') as file:
+            print(modified_lines)
+            file.writelines(modified_lines)
+
+
 
 
 if __name__ == '__main__':
     #copyOnlyLabelsFromImages()
     renameFile()
     #addCrownBBox()
+    #changeIDLablesOlive()
     print("OK")
