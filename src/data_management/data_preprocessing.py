@@ -120,7 +120,7 @@ def createShuffledKFold():
     print(f"foldSize: {2 * foldSize}")
 
     for i in range(0, 5, 1): # ForEach Fold [0...4]
-        for j in range(0, foldSize, 1): # Devo generare 400 numeri casuali DISTINTIù
+        for j in range(0, foldSize, 1): # Devo generare 400 numeri casuali DISTINTI
             fold_iDir = os.path.join(partitionFolderDir, ('fold_' + str(i)))
 
             while True:
