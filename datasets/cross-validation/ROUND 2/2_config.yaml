@@ -1,0 +1,18 @@
+download: null
+names:
+  0: tree
+  1: crown
+  2: olive
+test:
+- /raid/giustinomiglionico/datasets/FORK_A_OK_FOLD/fold_0
+- /raid/giustinomiglionico/datasets/FORK_B_OK_FOLD/fold_0
+train:
+- /raid/giustinomiglionico/datasets/FORK_A_OK_FOLD/fold_1
+- /raid/giustinomiglionico/datasets/FORK_A_OK_FOLD/fold_2
+- /raid/giustinomiglionico/datasets/FORK_A_OK_FOLD/fold_3
+- /raid/giustinomiglionico/datasets/FORK_A_OK_FOLD/fold_4
+- /raid/giustinomiglionico/datasets/FORK_B_OK_FOLD/fold_1
+- /raid/giustinomiglionico/datasets/FORK_B_OK_FOLD/fold_2
+- /raid/giustinomiglionico/datasets/FORK_B_OK_FOLD/fold_3
+- /raid/giustinomiglionico/datasets/FORK_B_OK_FOLD/fold_4
+val:
