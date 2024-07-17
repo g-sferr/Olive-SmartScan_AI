@@ -169,11 +169,12 @@ def module_tester():
 
     # Mapping from class IDs to class names
     class_map = {
-        0: "person",
-        1: "forklift"
+        0: "tree",
+        1: "crown",
+        2: "olive"
     }
     # Path to the directory containing the images and label files
-    directory_path = r'C:\Users\gsfer\Desktop\Seminario I.S\Seminario 1\Dataset\Dataset'
+    directory_path = r'C:\Users\gsfer\Desktop\various_python\Citrus-SmartScan_AI\datasets\olive_and_chioma'
     # Start processing the directory
     process_directory(directory_path, class_map)
 
