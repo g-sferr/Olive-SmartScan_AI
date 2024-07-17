@@ -159,6 +159,11 @@ def process_directory(directory, class_map):
 
 def module_tester():
     #Code for test functions of the module
+    """
+    
+    ***** Counting Classes *****
+    
+    """
     # Path to the directory containing the dataset
     cartella_dataset = r"C:\Users\gsfer\Desktop\various_python\Citrus-SmartScan_AI\datasets\olive_and_chioma"
 
@@ -167,6 +172,11 @@ def module_tester():
     else:
         print(f"The directory {cartella_dataset} does not exist.")
 
+    """
+    
+    ***** Drawn BBox on Image *****
+    
+    """
     # Mapping from class IDs to class names
     class_map = {
         0: "tree",
