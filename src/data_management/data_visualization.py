@@ -148,7 +148,7 @@ def process_directory(directory, class_map):
     # Iterate over all files in the directory
     for filename in sorted(os.listdir(directory)):
         # Check for image files based on their extensions
-        if filename.endswith('.jpg') or filename.endswith('.png'):
+        if filename.endswith('.jpg') or filename.endswith('.jpg'):
             image_path = os.path.join(directory, filename)
             label_path = os.path.splitext(image_path)[0] + '.txt'
             # Process each image and decide whether to continue based on user input
@@ -160,22 +160,7 @@ def process_directory(directory, class_map):
 def module_tester():
     #Code for test functions of the module
     """
-    
-    ***** Counting Classes *****
-    
-    """
-    # Path to the directory containing the dataset
-    cartella_dataset = r"C:\Users\gsfer\Desktop\various_python\Citrus-SmartScan_AI\datasets\olive_and_chioma"
-
-    if os.path.exists(cartella_dataset):
-        analizza_cartella(cartella_dataset)  # Analyzing the dataset directory
-    else:
-        print(f"The directory {cartella_dataset} does not exist.")
-
-    """
-    
     ***** Drawn BBox on Image *****
-    
     """
     # Mapping from class IDs to class names
     class_map = {
@@ -184,7 +169,7 @@ def module_tester():
         2: "olive"
     }
     # Path to the directory containing the images and label files
-    directory_path = r'C:\Users\gsfer\Desktop\various_python\Citrus-SmartScan_AI\datasets\olive_and_chioma'
+    directory_path = r'C:\Users\gsfer\Desktop\batch_corrupted_analysis\12_th-batch\img_and_txt'
     # Start processing the directory
     process_directory(directory_path, class_map)
 
