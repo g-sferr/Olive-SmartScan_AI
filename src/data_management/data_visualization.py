@@ -169,7 +169,11 @@ def module_tester():
         2: "olive"
     }
     # Path to the directory containing the images and label files
+<<<<<<< HEAD
     directory_path = r'C:\Users\gsfer\Desktop\batch_corrupted_analysis\39_th-batch'
+=======
+    directory_path = r'C:\Users\Francesco\Desktop\visualize\batch39'
+>>>>>>> e04a29da3374586b6fe7c674be4ef4151fd7cd5a
     # Start processing the directory
     process_directory(directory_path, class_map)
 
