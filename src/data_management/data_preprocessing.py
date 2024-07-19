@@ -4,6 +4,8 @@ import os
 import shutil
 import random
 
+from src.data_management.data_acquisition import OliveDatasetLoader
+
 
 def renameFile():
     directory = os.path.abspath('datasets/full_dataset')
@@ -76,27 +78,36 @@ def addCrownBBox():
             file.write('\n' + crownBBox)
             print(f"crownBBox added -> {label_files[i]}")
 
-def changeIDLablesOlive():
-    baseDir = os.path.abspath('datasets/processed/train_set')
-    labels_dir = os.path.join(baseDir, 'labels')
+def changeClassInsideLabelsFile(correctClass, folderBase, subFolder):
+    baseDir = os.path.abspath(folderBase)
+    labels_dir = os.path.join(baseDir, subFolder)
 
-    label_files = [f for f in os.listdir(labels_dir) if f.endswith('.txt')]
+    endType = '_tree' if(correctClass == 0) else '_crown' if(correctClass == 1) else '_olive' 
+
+    label_files = [f for f in os.listdir(labels_dir) if f.endswith(endType + '.txt')]
 
     for label_file in label_files:
         file_path = os.path.join(labels_dir, label_file)
         
-        print("File com'era:")
+        #print(f"File {file_path}")
         with open(file_path, 'r') as file:
             lines = file.readlines()
-            print(lines)
         
+        modified_lines = []
+
         # Modifica le righe che iniziano per '0 '
-        modified_lines = ['2' + line[1:] if line.startswith('0 ') else line for line in lines]
-        
-        print("File com'è adesso:")
+        for line in lines:
+            if not line.startswith(str(correctClass)):
+                X = line
+                           
+        modified_lines = [str(correctClass) + line[1:] if (not line.startswith(str(correctClass)) ) else line for line in lines]
+        baseDestDir = os.path.abspath(folderBase)
+        labelsDestDir = os.path.join(baseDestDir, 'C' + subFolder)
+
+        file_path = os.path.join(labelsDestDir, label_file)
         with open(file_path, 'w') as file:
-            print(modified_lines)
-            file.writelines(modified_lines)
+            file.writelines(modified_lines) # Scrittura di una lista di strighe
+    print(f"CorrectClass_OK --> {folderBase + '/' + subFolder}")
 
 
 def createShuffledKFold():
@@ -149,13 +160,68 @@ def createShuffledKFold():
         
         print(f"Fold {i}: Filled")
 
+def truncate(value, decimal_places = 6):
+    factor = 10.0 ** decimal_places
+    return int(value * factor) / factor
+
+def truncateBBoxesValues(baseDir, subFolder): # baseDir = r'C:\Users\Francesco\Desktop\visualize\ROUND_0', subFolder = 'train'
+    oliveDatasetLoader = OliveDatasetLoader(baseDir)
+
+    labels_files = [f for f in os.listdir(oliveDatasetLoader.data_dir + '/' + subFolder) if f.endswith('.txt')]
+    for label_file in labels_files:
+        classesTens, bboxesTens = oliveDatasetLoader._load_labels(subFolder, label_file)
+        bboxesList = bboxesTens.tolist()
+        classes = classesTens.tolist()
+        bboxesAppr = []
+        indice = 0
+        for bboxes in bboxesList:
+            bboxAppr = [truncate(coordinate) for coordinate in bboxes[1:]]
+            bboxAppr.insert(0, classes[indice])
+            indice += 1
+            bboxesAppr.append(bboxAppr)
+
+
+        with open(oliveDatasetLoader.data_dir + '/' + subFolder + '/truncated/' + label_file, 'w') as file:
+            for bboxAppr in bboxesAppr:
+                line = " ".join(map(str, bboxAppr))
+                line += '\n'
+                file.writelines(line)
+        
+        print(f"Truncated correctly -> {label_file}")
+        
+    
 
 
 if __name__ == '__main__':
     #copyOnlyLabelsFromImages()
     #renameFile()
     #addCrownBBox()
-    #changeIDLablesOlive()
 
-    createShuffledKFold()
+    #createShuffledKFold()
+    
+    #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'train')
+    #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'test')
+    #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'val')
+    
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_0', 'train')
+    changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_0', 'val')
+    changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_0', 'test')
+    
+    
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_1', 'test')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_1', 'val')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_1', 'train')
+
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_2', 'test')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_2', 'val')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_2', 'train')
+
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_3', 'test')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_3', 'val')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_3', 'train')
+    
+
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_4', 'test')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_4', 'val')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_4', 'train')
     print("OK")
