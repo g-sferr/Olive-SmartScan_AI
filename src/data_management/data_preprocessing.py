@@ -7,14 +7,14 @@ import random
 from src.data_management.data_acquisition import OliveDatasetLoader
 
 
-def renameFile():
-    directory = os.path.abspath('datasets/full_dataset')
+def renameFile(workingPath):
+    directory = os.path.abspath(workingPath)
     images_dir = os.path.join(directory, 'images')
     labels_dir = os.path.join(directory, 'labels')
 
-    destDirectory = os.path.abspath('datasets/tempDataset')
-    destImagesDir = os.path.join(destDirectory, 'images')
-    destlblDir = os.path.join(destDirectory, 'labels')
+    destDirectory = os.path.abspath(workingPath)
+    destImagesDir = os.path.join(destDirectory, 'Rimages')
+    destlblDir = os.path.join(destDirectory, 'Rlabels')
 
     image_files = [f for f in os.listdir(images_dir) if f.endswith('.jpg') or f.endswith('.png')]
     label_files = [f for f in os.listdir(labels_dir) if f.endswith('.txt')]
@@ -24,7 +24,7 @@ def renameFile():
 
     print(f"Length of images: {len(image_files)}")
     print(f"Length of labels: {len(label_files)}")
-    numeric_name = 0
+    numeric_name = 4000
 
     for i in range(len(image_files)):
         img_name, img_extension = os.path.splitext(image_files[i])
@@ -32,9 +32,9 @@ def renameFile():
         print(f"img_name: {img_name} | lbl_name: {lbl_name} ")
         assert (img_name == lbl_name)
 
-        splittedName = img_name.split("_") # Esempio di file: 0_olive.jpg oppure 0_tree.jpg
-        typeImg = str(splittedName[1]) # qui memorizzo solamente 'olive' oppure 'tree'
-
+        #splittedName = img_name.split("_") # Esempio di file: 0_olive.jpg oppure 0_tree.jpg
+        #typeImg = str(splittedName[1]) # qui memorizzo solamente 'olive' oppure 'tree'
+        typeImg = 'olive'
         #if img_name.__contains__("_tree"):
         #    continue
 
@@ -44,15 +44,15 @@ def renameFile():
         print(f"new_img_name: {new_img_name} | new_lbl_name: {new_lbl_name}")
         os.rename( os.path.join(images_dir, image_files[i]), new_img_name)
         os.rename( os.path.join(labels_dir, label_files[i]), new_lbl_name)
-        numeric_name += 1
+        numeric_name += 2
         
 
-def copyOnlyLabelsFromImages():
-    destinationDir = os.path.abspath('datasets/processed/DatasetSoloAlberi')
+def copyOnlyLabelsFromImages(path):
+    destinationDir = os.path.abspath(path)
     images_dest_dir = os.path.join(destinationDir, 'images')
     labels_dest_dir = os.path.join(destinationDir, 'destLabels')
 
-    sourceDir = os.path.abspath('datasets/processed/DatasetSoloAlberi')
+    sourceDir = os.path.abspath(path)
     source_labels_dir = os.path.join(sourceDir, 'labels')
 
     image_files = [f for f in os.listdir(images_dest_dir) if f.endswith('.jpg') or f.endswith('.png')]
@@ -67,16 +67,16 @@ def copyOnlyLabelsFromImages():
                 shutil.copy( os.path.join(source_labels_dir, label_files[j]), os.path.join(labels_dest_dir, label_files[j]))
                 print(f"Copying {img_name}")
 
-def addCrownBBox():
-    directory = os.path.abspath('datasets/processed/train_set')
-    labels_dir = os.path.join(directory, 'destLbl')
+def addCrownBBox(path):
+    directory = os.path.abspath(path)
+    labels_dir = os.path.join(directory, 'labels')
     label_files = [f for f in os.listdir(labels_dir) if f.endswith('.txt')]
 
-    crownBBox = "1 0.5 0.5 0.1 0.1"
+    crownBBox = "1 0.5 0.5 1 1"
     for i in range(len(label_files)):
         with open(os.path.join(labels_dir, label_files[i]), 'a') as file:
             file.write('\n' + crownBBox)
-            print(f"crownBBox added -> {label_files[i]}")
+            print(f"CrownBBox added for -> {label_files[i]}")
 
 def changeClassInsideLabelsFile(correctClass, folderBase, subFolder):
     baseDir = os.path.abspath(folderBase)
@@ -193,9 +193,9 @@ def truncateBBoxesValues(baseDir, subFolder): # baseDir = r'C:\Users\Francesco\D
 
 
 if __name__ == '__main__':
-    #copyOnlyLabelsFromImages()
-    #renameFile()
-    #addCrownBBox()
+    #copyOnlyLabelsFromImages(r'C:\Users\Francesco\Desktop\DatasetAggiuntivoChioma+Olive_train')
+    #addCrownBBox(r'C:\Users\Francesco\Desktop\DatasetAggiuntivo Chioma+Olive_valid')
+    renameFile(r'C:\Users\Francesco\Desktop\DatasetAggiuntivoChioma+Olive')
 
     #createShuffledKFold()
     
@@ -203,25 +203,19 @@ if __name__ == '__main__':
     #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'test')
     #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'val')
     
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_0', 'train')
-    changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_0', 'val')
-    changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_0', 'test')
-    
-    
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_1', 'test')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_1', 'val')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_1', 'train')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_0', '80')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_0', '20')
 
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_2', 'test')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_2', 'val')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_2', 'train')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_1', '80')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_1', '20')
 
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_3', 'test')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_3', 'val')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_3', 'train')
-    
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_2', '80')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_2', '20')
 
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_4', 'test')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_4', 'val')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Downloads\c-v_rounds\ROUND_4', 'train')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_3', '80')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_3', '20')
+
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_4', '80')
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_4', '20')
+
     print("OK")
