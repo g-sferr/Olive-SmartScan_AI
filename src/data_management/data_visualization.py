@@ -159,9 +159,9 @@ def process_directory(directory, class_map):
 
 def module_tester():
     #Code for test functions of the module
-    """
-    ***** Drawn BBox on Image *****
-    """
+    
+    #***** Drawn BBox on Image *****
+    
     # Mapping from class IDs to class names
     class_map = {
         0: "tree",
@@ -169,9 +169,19 @@ def module_tester():
         2: "olive"
     }
     # Path to the directory containing the images and label files
-    directory_path = r'C:\Users\Francesco\Desktop\visualize\batch39'
+    directory_path = r'C:\Users\Francesco\Desktop\tempDatasetOlive\FotoDiProvaModelloX'
     # Start processing the directory
     process_directory(directory_path, class_map)
+    
+
+    # Path to the directory containing the dataset
+    #cartella_dataset = r"C:\Users\Francesco\Desktop\tempDatasetOlive\FotoDiProvaModelloX"
+ 
+    #if os.path.exists(cartella_dataset):
+    #    analizza_cartella(cartella_dataset)  # Analyzing the dataset directory
+    #else:
+    #    print(f"The directory {cartella_dataset} does not exist.")
+
 
 if __name__ == '__main__':
     module_tester()
