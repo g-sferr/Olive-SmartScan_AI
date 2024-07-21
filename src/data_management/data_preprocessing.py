@@ -24,7 +24,7 @@ def renameFile(workingPath):
 
     print(f"Length of images: {len(image_files)}")
     print(f"Length of labels: {len(label_files)}")
-    numeric_name = 4000
+    numeric_name = 0
 
     for i in range(len(image_files)):
         img_name, img_extension = os.path.splitext(image_files[i])
@@ -110,12 +110,17 @@ def changeClassInsideLabelsFile(correctClass, folderBase, subFolder):
     print(f"CorrectClass_OK --> {folderBase + '/' + subFolder}")
 
 
-def createShuffledKFold():
-    directoryFullDataset = os.path.abspath('datasets/full_dataset')
+def createShuffledKFold(sourcePath, destPath):
+    # Il FULL_DATASET ha 3500 foto di cui 1000Alberi , 2500 Olive (Tecnicamente 1500Olive e 1000Olive+Chioma)
+    # La distribuzione, visto che il modello riesce subito a riconoscere gli alberi, deve prevedere:
+    # -] 200 foto di alberi per Fold
+    # -] 500 foto di olive per Fold
+
+    directoryFullDataset = os.path.abspath(sourcePath)
     imagesFullDatasetDir = os.path.join(directoryFullDataset, 'images')
     labelsFullDatasetDir = os.path.join(directoryFullDataset, 'labels')
 
-    partitionFolderDir = os.path.abspath('datasets/partition_folders')
+    partitionFolderDir = os.path.abspath(destPath)
 
     imagesFullDataset = [f for f in os.listdir(imagesFullDatasetDir) if f.endswith('.jpg') or f.endswith('.png')]
     labelsFullDataset = [f for f in os.listdir(labelsFullDatasetDir) if f.endswith('.txt')]
@@ -124,41 +129,43 @@ def createShuffledKFold():
 
     #imagesTreeFullDataset = [f for f in os.listdir(imagesFullDatasetDir) if f.endswith('_tree.jpg') or f.endswith('_tree.png')]
     #labelsTreeFullDataset = [f for f in os.listdir(labelsFullDatasetDir) if f.endswith('_tree.txt')]
+    datasetSize = 1635
+    treeImagesNumber = 1000
+    oliveImageNumber = 635
+    assert(datasetSize == (treeImagesNumber + oliveImageNumber)) # CHECK
 
-    foldSize = 200 # maxRandomNumber / 5
     uniqueOliveNumber = []
     uniqueTreeNumber = []
-    print(f"foldSize: {2 * foldSize}")
 
     for i in range(0, 5, 1): # ForEach Fold [0...4]
-        for j in range(0, foldSize, 1): # Devo generare 400 numeri casuali DISTINTI
-            fold_iDir = os.path.join(partitionFolderDir, ('fold_' + str(i)))
+        fold_iDir = os.path.join(partitionFolderDir, ('fold_' + str(i)))
 
+        for j in range(0, int(oliveImageNumber / 5), 1):
             while True:
-                numeroOlivacasuale = random.randint(0, 1998)
+                numeroOlivacasuale = random.randint(0, 1268)
                 if (numeroOlivacasuale not in uniqueOliveNumber) and (numeroOlivacasuale % 2 == 0):
                     break
             uniqueOliveNumber.append(numeroOlivacasuale)
+            oliveFileName = str(numeroOlivacasuale) + "_olive"
+            shutil.copy( os.path.join(imagesFullDatasetDir, oliveFileName + ".jpg"), os.path.join(fold_iDir, oliveFileName + ".jpg"))
+            shutil.copy( os.path.join(labelsFullDatasetDir, oliveFileName + ".txt"), os.path.join(fold_iDir, oliveFileName + ".txt"))
 
+        print(f"Fold {i}: {int(oliveImageNumber / 5)} Olive selected")   
+
+        for j in range(0, int(treeImagesNumber / 5), 1):
             while True:
                 numeroTreecasuale = random.randint(1, 1999)
                 if (numeroTreecasuale not in uniqueTreeNumber) and (numeroTreecasuale % 2 != 0):
                     break
             uniqueTreeNumber.append(numeroTreecasuale)
-            
-            oliveFileName = str(numeroOlivacasuale) + "_olive"
-
-            shutil.copy( os.path.join(imagesFullDatasetDir, oliveFileName + ".jpg"), os.path.join(fold_iDir, oliveFileName + ".jpg"))
-            shutil.copy( os.path.join(labelsFullDatasetDir, oliveFileName + ".txt"), os.path.join(fold_iDir, oliveFileName + ".txt"))
-
             treeFilename = str(numeroTreecasuale) + "_tree"
-
             shutil.copy( os.path.join(imagesFullDatasetDir, treeFilename + ".jpg"), os.path.join(fold_iDir, treeFilename + ".jpg"))
             shutil.copy( os.path.join(labelsFullDatasetDir, treeFilename + ".txt"), os.path.join(fold_iDir, treeFilename + ".txt"))
             
+        print(f"Fold {i}: {int(treeImagesNumber / 5)} Tree selected")   
             #print(f"\tCopiato il file: {imagesOliveFullDataset[numero_casuale]} + {labelsOliveFullDataset[numero_casuale]}")
         
-        print(f"Fold {i}: Filled")
+        
 
 def truncate(value, decimal_places = 6):
     factor = 10.0 ** decimal_places
@@ -195,9 +202,11 @@ def truncateBBoxesValues(baseDir, subFolder): # baseDir = r'C:\Users\Francesco\D
 if __name__ == '__main__':
     #copyOnlyLabelsFromImages(r'C:\Users\Francesco\Desktop\DatasetAggiuntivoChioma+Olive_train')
     #addCrownBBox(r'C:\Users\Francesco\Desktop\DatasetAggiuntivo Chioma+Olive_valid')
-    renameFile(r'C:\Users\Francesco\Desktop\DatasetAggiuntivoChioma+Olive')
+    #renameFile(r'C:\Users\Francesco\Desktop\oliveGiuste\olive')
 
-    #createShuffledKFold()
+    createShuffledKFold(r'C:\Users\Francesco\Desktop\full_dataset', r'C:\Users\Francesco\Desktop\KFoldEquallyDistr')
+
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\full_dataset', 'labels')
     
     #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'train')
     #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'test')
