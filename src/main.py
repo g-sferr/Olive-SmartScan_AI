@@ -84,11 +84,10 @@ def main():
     for images in dataloader:
         imagePath = os.path.join(data_dir, subFolder)
         imagePath = os.path.join(imagePath, images) 
-        
-        #print(f"Numero di olive in {images}: {count} olive in chioma")
 
         # Aggiunge il conteggio stimato
         count = count_olives(imagePath, model)
+        print(f"Numero di olive in {images}: {count} ")
         predicted_counts.append(count)
 
         # Qua bisogna inserire il vero conteggio delle olive per ogni immagine
