@@ -1,9 +1,24 @@
-from ultralytics import YOLO
-import torch
-import torch.nn as nn
-import torchvision.models as models
-import numpy as np
+
 import cv2
+import os
+import torch
+import numpy as np
+import torch.nn as nn
+from math import sqrt
+from statistics import stdev
+from ultralytics import YOLO
+import torchvision.models as models
+from sklearn.metrics import mean_squared_error
+from src.data_management.data_acquisition import OliveDatasetLoader
+
+
+def compute_mse_and_devStd(true_counts, predicted_counts):
+    
+    mse = mean_squared_error(true_counts, predicted_counts)
+    # std_dev = stdev(true_counts - predicted_counts)
+    rmsd = sqrt(mse)
+
+    return mse, rmsd
 
 def is_contained(box1, box2):
     """Verifica se una bounding box è completamente contenuta in un'altra.
@@ -19,16 +34,20 @@ def is_contained(box1, box2):
             box1[2] <= box2[2] and box1[3] <= box2[3])
 
 def count_olives(img_path, model):
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model.to(device)
     results = model(img_path)
-    boxes = results.xyxy[0].numpy()
-    cls = results.cls[0].numpy()
+    
+    boxes = results[0].boxes
+    boxes = boxes.xyxy.cpu().numpy()
+    cls = results[0].boxes.cls.cpu().numpy()
 
-    # Definire le classi
+    # Classi
     TREE_CLASS_ID = 0
     CROWN_CLASS_ID = 1
     OLIVE_CLASS_ID = 2
 
-    # Separare le bounding box in base alle classi
+    # Separazione bounding box in base alle classi
     tree_boxes = [box for i, box in enumerate(boxes) if cls[i] == TREE_CLASS_ID]
     crown_boxes = [box for i, box in enumerate(boxes) if cls[i] == CROWN_CLASS_ID]
     olive_boxes = [box for i, box in enumerate(boxes) if cls[i] == OLIVE_CLASS_ID]
@@ -51,17 +70,36 @@ def count_olives(img_path, model):
 
 def main():
     #Code for test functions of the module
-    data_dir = 'path/to/data'
-    dataloader = load_data(data_dir)
+    data_dir = r'C:\path\images'
+    oliveDatasetLoader = OliveDatasetLoader(data_dir)
+    subFolder = 'FotoDiProvaModelloX'
+    dataloader = oliveDatasetLoader._load_data(subFolder)
 
     # Carica il modello YOLO pre-addestrato
-    model = YOLO('best.pt')  # Sostituisci 'best.pt' con il percorso del tuo modello
-
-
+    model = YOLO(r'C:\path\ModelloX\best.pt')
+    
+    true_counts = []
+    predicted_counts = []
     # Processa ogni immagine
-    for input in dataloader:
-        count = count_olives(input, model)
-        print(f"Numero di olive in {input}: {count}")
+    for images in dataloader:
+        imagePath = os.path.join(data_dir, subFolder)
+        imagePath = os.path.join(imagePath, images) 
+        
+        #print(f"Numero di olive in {images}: {count} olive in chioma")
+
+        # Aggiunge il conteggio stimato
+        count = count_olives(imagePath, model)
+        predicted_counts.append(count)
+
+        # Qua bisogna inserire il vero conteggio delle olive per ogni immagine
+        # ToDo: Brainstorming con Fra
+        true_count = ...  # Da definire
+        true_counts.append(true_count)
+
+    # Calcola MSE e deviazione standard
+    mse, std_dev = compute_mse_and_devStd(true_counts, predicted_counts)
+    print(f"MSE: {mse}")
+    print(f"Deviazione standard: {std_dev}")
 
 
 if __name__ == '__main__':
