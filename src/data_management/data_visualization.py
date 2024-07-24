@@ -58,6 +58,25 @@ def analizza_cartella(directory):
     for istanza, conteggio in risultati_totali.items():
         print(f"{istanza}: {conteggio}")
 
+def draw_bbox_from_model(imageCV2, class_id, box, class_map):
+    image_height, image_width = imageCV2.shape[:2]
+
+    normalized_x_min, normalized_y_min, normalized_x_max, normalized_y_max = box
+
+    # Convert normalized coordinates to absolute pixel values based on image dimensions
+    x_min = int(normalized_x_min * image_width)
+    y_min = int(normalized_y_min * image_height)
+    x_max = int(normalized_x_max * image_width)
+    y_max = int(normalized_y_max * image_height)
+
+    # Draw the rectangle on the image
+    cv2.rectangle(imageCV2, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+
+    # Add the class name label above the bounding box
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    cv2.putText(imageCV2, class_map.get(class_id, f'classe{class_id}'), (x_min, y_min - 10), font, 0.6, (0, 255, 0), 2)
+
+
 
 def draw_bbox(image, class_id, x_center, y_center, width, height, class_map):
     """
@@ -160,6 +179,7 @@ def process_directory(directory, class_map):
 def module_tester():
     #Code for test functions of the module
     
+<<<<<<< HEAD
     # ***** Counting of Classes *****
     
     # Path to the directory containing the dataset
@@ -173,6 +193,10 @@ def module_tester():
     """
     ***** Drawn BBox on Image *****
     """
+=======
+    #***** Drawn BBox on Image *****
+    
+>>>>>>> 71c7726a4d669d22e3d218b27c680fa01c3ec10b
     # Mapping from class IDs to class names
     class_map = {
         0: "tree",
@@ -180,9 +204,23 @@ def module_tester():
         2: "olive"
     }
     # Path to the directory containing the images and label files
+<<<<<<< HEAD
     directory_path = r'C:\Users\gsfer\Desktop\final_test_dataset_OK\filtered'
+=======
+    directory_path = r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest\images'
+>>>>>>> 71c7726a4d669d22e3d218b27c680fa01c3ec10b
     # Start processing the directory
     process_directory(directory_path, class_map)
+    
+
+    # Path to the directory containing the dataset
+    #cartella_dataset = r"C:\Users\Francesco\Desktop\tempDatasetOlive\FotoDiProvaModelloX"
+ 
+    #if os.path.exists(cartella_dataset):
+    #    analizza_cartella(cartella_dataset)  # Analyzing the dataset directory
+    #else:
+    #    print(f"The directory {cartella_dataset} does not exist.")
+
 
 if __name__ == '__main__':
     module_tester()

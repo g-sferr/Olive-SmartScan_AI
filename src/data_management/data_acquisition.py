@@ -41,33 +41,26 @@ class OliveDatasetLoader(Dataset):
                 # self._class.append(_class)
         '''
 
-    def _load_labels(self, subFolder):
-        base_dir = os.path.abspath(self.data_dir)
-        labels_dir = os.path.join(base_dir, subFolder)
-
-        labels_files = [f for f in os.listdir(labels_dir) if f.endswith('.txt')]
-
+    def _load_labels(self, subFolder, fileName): # Dato un file, ritorna la lista delle classi e la lista delle bboxes in quel file
         bboxes = []
         classes = []
 
-        for labels_file in labels_files:
-            path = self.data_dir + '/' + subFolder + '/' + labels_file
-            with open(path, 'r') as file:
-                lines = file.readlines()
-                NoLine = True
-                for line in lines:
-                    try:
-                        _class, x1, y1, w, h = map(float, line.strip().split())
-                        print(type(x1))
-                        NoLine = False
-                    except:
-                        print(f"File non corretto: {labels_file}")
-                        break
-                    bboxes.append([int(_class), x1, y1, w, h])
-                    classes.append(_class)
-                    # _class.append(conf)
-                if NoLine:
-                    print(f"NoLine --> {labels_file}")
+        path = self.data_dir + '/' + subFolder + '/' + fileName
+        with open(path, 'r') as file:
+            lines = file.readlines()
+            noLine = True
+            for line in lines:
+                try:
+                    _class, x1, y1, w, h = map(float, line.strip().split())
+                    noLine = False
+                except:
+                    print(f"File non corretto: {fileName}")
+                    break
+                bboxes.append([int(_class), x1, y1, w, h])
+                classes.append(_class)
+                # _class.append(conf)
+            if noLine:
+                print(f"noLine --> {fileName}")
 
         return torch.tensor(classes, dtype=torch.int16), torch.tensor(bboxes, dtype=torch.float16) # torch.tensor(_class, dtype=torch.float32)
 
@@ -104,6 +97,8 @@ class OliveDatasetLoader(Dataset):
         resized_image = resize_transform(image)
 
         resized_image.save(r'C:/Users/Francesco/Desktop/visualize/resized/' + sourceFolder + '/' + subFolder + '/' + imageNameFile)
+
+
 
 
 def module_tester():
