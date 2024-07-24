@@ -58,6 +58,25 @@ def analizza_cartella(directory):
     for istanza, conteggio in risultati_totali.items():
         print(f"{istanza}: {conteggio}")
 
+def draw_bbox_from_model(imageCV2, class_id, box, class_map):
+    image_height, image_width = imageCV2.shape[:2]
+
+    normalized_x_min, normalized_y_min, normalized_x_max, normalized_y_max = box
+
+    # Convert normalized coordinates to absolute pixel values based on image dimensions
+    x_min = int(normalized_x_min * image_width)
+    y_min = int(normalized_y_min * image_height)
+    x_max = int(normalized_x_max * image_width)
+    y_max = int(normalized_y_max * image_height)
+
+    # Draw the rectangle on the image
+    cv2.rectangle(imageCV2, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+
+    # Add the class name label above the bounding box
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    cv2.putText(imageCV2, class_map.get(class_id, f'classe{class_id}'), (x_min, y_min - 10), font, 0.6, (0, 255, 0), 2)
+
+
 
 def draw_bbox(image, class_id, x_center, y_center, width, height, class_map):
     """
@@ -169,7 +188,7 @@ def module_tester():
         2: "olive"
     }
     # Path to the directory containing the images and label files
-    directory_path = r'C:\Users\Francesco\Desktop\tempDatasetOlive\FotoDiProvaModelloX'
+    directory_path = r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest\images'
     # Start processing the directory
     process_directory(directory_path, class_map)
     
