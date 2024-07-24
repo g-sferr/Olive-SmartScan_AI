@@ -98,7 +98,7 @@ class OliveDatasetLoader(Dataset):
 
         resized_image.save(r'C:/Users/Francesco/Desktop/visualize/resized/' + sourceFolder + '/' + subFolder + '/' + imageNameFile)
 
-    def getTrueOliveCount(pathLabels):
+    def getTrueOliveCount(self, pathLabels):
         oliveCount = 0
         with open(pathLabels, 'r') as file:
             oliveCount = int(file.read().strip())
