@@ -1,4 +1,4 @@
-import os
+import os # For os operation
 import cv2 # For image processing and OpenCV functionalities
 import matplotlib.pyplot as plt
 
