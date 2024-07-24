@@ -7,10 +7,18 @@ import torch.nn as nn
 from math import sqrt
 from statistics import stdev
 from ultralytics import YOLO
-import torchvision.models as models
+import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 from src.data_management.data_acquisition import OliveDatasetLoader
 
+
+def plot_errors(true_counts, predicted_counts):
+    errors = [true - pred for true, pred in zip(true_counts, predicted_counts)]
+    plt.hist(errors, bins=30, alpha=0.7, color='blue', edgecolor='black')
+    plt.xlabel('Error (True Count - Predicted Count)')
+    plt.ylabel('Frequency')
+    plt.title('Distribution of Counting Errors')
+    plt.show()
 
 def compute_mse_and_devStd(true_counts, predicted_counts):
     
@@ -106,6 +114,9 @@ def main():
     mse, std_dev = compute_mse_and_devStd(true_counts, predicted_counts)
     print(f"MSE: {mse}")
     print(f"Deviazione standard: {std_dev}")
+
+    # Visualizza la distribuzione degli errori
+    plot_errors(true_counts, predicted_counts)
 
 
 if __name__ == '__main__':
