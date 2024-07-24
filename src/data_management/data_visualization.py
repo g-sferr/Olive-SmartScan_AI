@@ -41,7 +41,7 @@ def analizza_cartella(directory):
     risultati_totali = {}  # Dictionary to store the total counts of instances across all files
 
     # Iterating through each file in the directory
-    for filename in os.listdir(directory):
+    for filename in os.listdir(directory):   
         if filename.endswith(".txt"):  # Considering only files with '.txt' extension
             file_path = os.path.join(directory, filename)  # Getting the full path of the file
             istanze_contate = conta_istanze_darknet(file_path)  # Counting instances in the current file
@@ -159,6 +159,17 @@ def process_directory(directory, class_map):
 
 def module_tester():
     #Code for test functions of the module
+    
+    # ***** Counting of Classes *****
+    
+    # Path to the directory containing the dataset
+    #cartella_dataset = r"C:\Users\gsfer\Desktop\Seminario I.S\Seminario 2\drive_files\data_forklift\valid"
+
+    # if os.path.exists(cartella_dataset):
+        # analizza_cartella(cartella_dataset)  # Analyzing the dataset directory
+    # else:
+        # print(f"The directory {cartella_dataset} does not exist.")
+    
     """
     ***** Drawn BBox on Image *****
     """
@@ -169,11 +180,7 @@ def module_tester():
         2: "olive"
     }
     # Path to the directory containing the images and label files
-<<<<<<< HEAD
-    directory_path = r'C:\Users\gsfer\Desktop\batch_corrupted_analysis\39_th-batch'
-=======
-    directory_path = r'C:\Users\Francesco\Desktop\visualize\batch39'
->>>>>>> e04a29da3374586b6fe7c674be4ef4151fd7cd5a
+    directory_path = r'C:\Users\gsfer\Desktop\final_test_dataset_OK\filtered'
     # Start processing the directory
     process_directory(directory_path, class_map)
 
