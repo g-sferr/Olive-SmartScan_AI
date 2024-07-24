@@ -6,15 +6,15 @@ import random
 
 
 def renameFile():
-    directory = os.path.abspath('datasets/full_dataset')
+    directory = os.path.abspath(r'C:\Users\gsfer\Desktop\only_olive_plus')
     images_dir = os.path.join(directory, 'images')
     labels_dir = os.path.join(directory, 'labels')
 
-    destDirectory = os.path.abspath('datasets/tempDataset')
+    destDirectory = os.path.abspath(r'C:\Users\gsfer\Desktop\only_olive_plus\destDir')
     destImagesDir = os.path.join(destDirectory, 'images')
     destlblDir = os.path.join(destDirectory, 'labels')
 
-    image_files = [f for f in os.listdir(images_dir) if f.endswith('.jpg') or f.endswith('.png')]
+    image_files = [f for f in os.listdir(images_dir) if f.endswith('.jpg')]
     label_files = [f for f in os.listdir(labels_dir) if f.endswith('.txt')]
 
     image_files.sort()
@@ -22,7 +22,7 @@ def renameFile():
 
     print(f"Length of images: {len(image_files)}")
     print(f"Length of labels: {len(label_files)}")
-    numeric_name = 0
+    numeric_name = 2000
 
     for i in range(len(image_files)):
         img_name, img_extension = os.path.splitext(image_files[i])
@@ -30,8 +30,9 @@ def renameFile():
         print(f"img_name: {img_name} | lbl_name: {lbl_name} ")
         assert (img_name == lbl_name)
 
-        splittedName = img_name.split("_") # Esempio di file: 0_olive.jpg oppure 0_tree.jpg
-        typeImg = str(splittedName[1]) # qui memorizzo solamente 'olive' oppure 'tree'
+        #splittedName = img_name.split("_") # Esempio di file: 0_olive.jpg oppure 0_tree.jpg
+        #typeImg = str(splittedName[1]) # qui memorizzo solamente 'olive' oppure 'tree'
+        typeImg = "olive"
 
         #if img_name.__contains__("_tree"):
         #    continue
@@ -42,18 +43,18 @@ def renameFile():
         print(f"new_img_name: {new_img_name} | new_lbl_name: {new_lbl_name}")
         os.rename( os.path.join(images_dir, image_files[i]), new_img_name)
         os.rename( os.path.join(labels_dir, label_files[i]), new_lbl_name)
-        numeric_name += 1
+        numeric_name += 2
         
 
 def copyOnlyLabelsFromImages():
-    destinationDir = os.path.abspath('datasets/processed/DatasetSoloAlberi')
+    destinationDir = os.path.abspath(r'C:\Users\gsfer\Desktop\only_olive_plus\destDir')
     images_dest_dir = os.path.join(destinationDir, 'images')
-    labels_dest_dir = os.path.join(destinationDir, 'destLabels')
+    labels_dest_dir = os.path.join(destinationDir, 'labels')
 
-    sourceDir = os.path.abspath('datasets/processed/DatasetSoloAlberi')
+    sourceDir = os.path.abspath(r'C:\Users\gsfer\Desktop\only_olive_plus')
     source_labels_dir = os.path.join(sourceDir, 'labels')
 
-    image_files = [f for f in os.listdir(images_dest_dir) if f.endswith('.jpg') or f.endswith('.png')]
+    image_files = [f for f in os.listdir(images_dest_dir) if f.endswith('.jpg')]
 
     label_files = [f for f in os.listdir(source_labels_dir) if f.endswith('.txt')]
 
@@ -153,9 +154,9 @@ def createShuffledKFold():
 
 if __name__ == '__main__':
     #copyOnlyLabelsFromImages()
-    #renameFile()
+    renameFile()
     #addCrownBBox()
     #changeIDLablesOlive()
 
-    createShuffledKFold()
+    #createShuffledKFold()
     print("OK")
