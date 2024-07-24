@@ -196,35 +196,46 @@ def truncateBBoxesValues(baseDir, subFolder): # baseDir = r'C:\Users\Francesco\D
         
         print(f"Truncated correctly -> {label_file}")
         
+
+def getOliveCountFromLabelsFile(pathLabels):
+    oliveCount = 0
+    with open(pathLabels, 'r') as file:
+        for line in file:
+            oliveCount = oliveCount + (1 if str(line).startswith("2") else 0)
+    return oliveCount
     
+def setOliveNumber(sourcePath):
+    file_dir = os.path.abspath(sourcePath)
+    images_file = [f for f in os.listdir(file_dir) if f.endswith('.jpg')]
+    #labels_file = [f for f in os.listdir(file_dir) if f.endswith('.txt')]
+
+    for image in images_file:
+        oliveCount = getOliveCountFromLabelsFile(os.path.join(file_dir, str(image).replace(".jpg", ".txt")))
+        correctOliveNumber = input(f"Img: {image} -> | OlivesFromLabels: {oliveCount} | OlivesFromReal: ")
+        if correctOliveNumber == '':
+            correctOliveNumber = int(oliveCount)
+
+        fileLine = str(correctOliveNumber)
+        with open(os.path.join(file_dir, str(image).replace(".jpg", "Count.txt")), 'w') as file:
+            file.writelines(fileLine)
+
+
+
 
 
 if __name__ == '__main__':
     #copyOnlyLabelsFromImages(r'C:\Users\Francesco\Desktop\DatasetAggiuntivoChioma+Olive_train')
     #addCrownBBox(r'C:\Users\Francesco\Desktop\DatasetAggiuntivo Chioma+Olive_valid')
-    #renameFile(r'C:\Users\Francesco\Desktop\oliveGiuste\olive')
+    #renameFile(r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest')
 
-    createShuffledKFold(r'C:\Users\Francesco\Desktop\full_dataset', r'C:\Users\Francesco\Desktop\KFoldEquallyDistr')
+    #createShuffledKFold(r'C:\Users\Francesco\Desktop\full_dataset', r'C:\Users\Francesco\Desktop\KFoldEquallyDistr')
 
     #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\full_dataset', 'labels')
     
     #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'train')
-    #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'test')
-    #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'val')
     
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_0', '80')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_0', '20')
+    #changeClassInsideLabelsFile(2, r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest', 'labels')
 
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_1', '80')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_1', '20')
-
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_2', '80')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_2', '20')
-
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_3', '80')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_3', '20')
-
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_4', '80')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\KFoldEquallyDistr\fold_4', '20')
+    setOliveNumber(r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest\images')
 
     print("OK")
