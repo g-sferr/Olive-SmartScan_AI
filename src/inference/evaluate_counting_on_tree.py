@@ -7,7 +7,6 @@ from src.inference.utils import compute_mse_and_devStd, count_olives
 
 
 def main():
-    ConnectionAbortedError
     #Code for test functions of the module
     data_dir = r'C:\Users\Francesco\Desktop\countingTest\TrueCount'
     oliveDatasetLoader = OliveDatasetLoader(data_dir)
