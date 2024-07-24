@@ -1,7 +1,10 @@
 import os
 import cv2 # For image processing and OpenCV functionalities
+import matplotlib.pyplot as plt
 
-# Function to count instances in a Darknet annotation file
+
+# ############ BEGIN-Object Detection Seminar Code ############
+
 def conta_istanze_darknet(file_path):
     istanze = {}  # Dictionary to store the counts of instances
     
@@ -36,7 +39,6 @@ def conta_istanze_darknet(file_path):
 
     return istanze  # Returning the dictionary containing the counts of instances for each class label
 
-# Function to analyze all annotation files in a directory
 def analizza_cartella(directory):
     risultati_totali = {}  # Dictionary to store the total counts of instances across all files
 
@@ -57,26 +59,6 @@ def analizza_cartella(directory):
     print("\nTotal Results:")
     for istanza, conteggio in risultati_totali.items():
         print(f"{istanza}: {conteggio}")
-
-def draw_bbox_from_model(imageCV2, class_id, box, class_map):
-    image_height, image_width = imageCV2.shape[:2]
-
-    normalized_x_min, normalized_y_min, normalized_x_max, normalized_y_max = box
-
-    # Convert normalized coordinates to absolute pixel values based on image dimensions
-    x_min = int(normalized_x_min * image_width)
-    y_min = int(normalized_y_min * image_height)
-    x_max = int(normalized_x_max * image_width)
-    y_max = int(normalized_y_max * image_height)
-
-    # Draw the rectangle on the image
-    cv2.rectangle(imageCV2, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
-
-    # Add the class name label above the bounding box
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    cv2.putText(imageCV2, class_map.get(class_id, f'classe{class_id}'), (x_min, y_min - 10), font, 0.6, (0, 255, 0), 2)
-
-
 
 def draw_bbox(image, class_id, x_center, y_center, width, height, class_map):
     """
@@ -107,7 +89,6 @@ def draw_bbox(image, class_id, x_center, y_center, width, height, class_map):
     # Add the class name label above the bounding box
     font = cv2.FONT_HERSHEY_SIMPLEX
     cv2.putText(image, class_map.get(class_id, f'classe{class_id}'), (x_min, y_min - 10), font, 0.6, (0, 255, 0), 2)
-
 
 def process_image(image_path, label_path, class_map):
     """
@@ -175,28 +156,39 @@ def process_directory(directory, class_map):
             if not continue_processing:
                 break
 
+# ############ END-Object Detection Seminar Code ############
+
+def plot_errors(true_counts, predicted_counts):
+    errors = [true - pred for true, pred in zip(true_counts, predicted_counts)]
+    plt.hist(errors, bins=30, alpha=0.7, color='blue', edgecolor='black')
+    plt.xlabel('Error (True Count - Predicted Count)')
+    plt.ylabel('Frequency')
+    plt.title('Distribution of Counting Errors')
+    plt.show()
+
+def draw_bbox_from_model(imageCV2, class_id, box, class_map):
+    
+    image_height, image_width = imageCV2.shape[:2]
+    normalized_x_min, normalized_y_min, normalized_x_max, normalized_y_max = box
+
+    # Convert normalized coordinates to absolute pixel values based on image dimensions
+    x_min = int(normalized_x_min * image_width)
+    y_min = int(normalized_y_min * image_height)
+    x_max = int(normalized_x_max * image_width)
+    y_max = int(normalized_y_max * image_height)
+
+    # Draw the rectangle on the image
+    cv2.rectangle(imageCV2, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+    # Add the class name label above the bounding box
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    cv2.putText(imageCV2, class_map.get(class_id, f'classe{class_id}'),
+                (x_min, y_min - 10), font, 0.6, (0, 255, 0), 2)
 
 def module_tester():
-    #Code for test functions of the module
+    # Code for test functions of the module
     
-<<<<<<< HEAD
-    # ***** Counting of Classes *****
+    # ***** Drawn BBox on Image *****
     
-    # Path to the directory containing the dataset
-    #cartella_dataset = r"C:\Users\gsfer\Desktop\Seminario I.S\Seminario 2\drive_files\data_forklift\valid"
-
-    # if os.path.exists(cartella_dataset):
-        # analizza_cartella(cartella_dataset)  # Analyzing the dataset directory
-    # else:
-        # print(f"The directory {cartella_dataset} does not exist.")
-    
-    """
-    ***** Drawn BBox on Image *****
-    """
-=======
-    #***** Drawn BBox on Image *****
-    
->>>>>>> 71c7726a4d669d22e3d218b27c680fa01c3ec10b
     # Mapping from class IDs to class names
     class_map = {
         0: "tree",
@@ -204,20 +196,18 @@ def module_tester():
         2: "olive"
     }
     # Path to the directory containing the images and label files
-<<<<<<< HEAD
-    directory_path = r'C:\Users\gsfer\Desktop\final_test_dataset_OK\filtered'
-=======
     directory_path = r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest\images'
->>>>>>> 71c7726a4d669d22e3d218b27c680fa01c3ec10b
     # Start processing the directory
     process_directory(directory_path, class_map)
     
+
+    # ***** Counting of Classes *****
 
     # Path to the directory containing the dataset
     #cartella_dataset = r"C:\Users\Francesco\Desktop\tempDatasetOlive\FotoDiProvaModelloX"
  
     #if os.path.exists(cartella_dataset):
-    #    analizza_cartella(cartella_dataset)  # Analyzing the dataset directory
+    #    analizza_cartella(cartella_dataset)  # Analyzing the dataset directory and counting classes
     #else:
     #    print(f"The directory {cartella_dataset} does not exist.")
 

@@ -98,88 +98,25 @@ class OliveDatasetLoader(Dataset):
 
         resized_image.save(r'C:/Users/Francesco/Desktop/visualize/resized/' + sourceFolder + '/' + subFolder + '/' + imageNameFile)
 
-
+    def getTrueOliveCount(pathLabels):
+        oliveCount = 0
+        with open(pathLabels, 'r') as file:
+            oliveCount = int(file.read().strip())
+            #for line in file:
+                #oliveCount = int(line) #int(file.read().strip())
+        return oliveCount
 
 
 def module_tester():
-    #Code for test functions of the module
+
+    # Code for test functions of the module, an example below for load_and_resize
 
     oliveDatasetLoader0 = OliveDatasetLoader(r'C:\Users\Francesco\Desktop\visualize\ROUND_0')
-    oliveDatasetLoader1 = OliveDatasetLoader(r'C:\Users\Francesco\Desktop\visualize\ROUND_1')
-    oliveDatasetLoader2 = OliveDatasetLoader(r'C:\Users\Francesco\Desktop\visualize\ROUND_2')
-    oliveDatasetLoader3 = OliveDatasetLoader(r'C:\Users\Francesco\Desktop\visualize\ROUND_3')
-    oliveDatasetLoader4 = OliveDatasetLoader(r'C:\Users\Francesco\Desktop\visualize\ROUND_4')
-
     imageList = oliveDatasetLoader0._load_data('train')
     imageList.sort()
-    incr = imageList[1247]
+
     for image in imageList:
         oliveDatasetLoader0.load_and_resize(image, 'ROUND_0', 'train')
-        input()
-
-    imageList = oliveDatasetLoader0._load_data('test')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_0', 'test')
-
-    imageList = oliveDatasetLoader0._load_data('val')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_0', 'val')
-    print("ROUND_0--> OK")
-
-    imageList = oliveDatasetLoader1._load_data('train')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_1', 'train')
-
-    imageList = oliveDatasetLoader1._load_data('test')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_1', 'test')
-
-    imageList = oliveDatasetLoader1._load_data('val')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_1', 'val')
-    print("ROUND_1--> OK")
-
-    imageList = oliveDatasetLoader2._load_data('train')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_2', 'train')
-
-    imageList = oliveDatasetLoader2._load_data('test')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_2', 'test')
-
-    imageList = oliveDatasetLoader2._load_data('val')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_2', 'val')
-    print("ROUND_2--> OK")
-
-    imageList = oliveDatasetLoader3._load_data('train')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_3', 'train')
-
-    imageList = oliveDatasetLoader3._load_data('test')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_3', 'test')
-
-    imageList = oliveDatasetLoader3._load_data('val')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_3', 'val')
-    print("ROUND_3--> OK")
-
-    imageList = oliveDatasetLoader4._load_data('train')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_4', 'train')
-
-    imageList = oliveDatasetLoader4._load_data('test')
-    for image in imageList:
-        oliveDatasetLoader0.load_and_resize(image, 'ROUND_4', 'test')
-
-    imageList = oliveDatasetLoader4._load_data('val')
-    for image in imageList:
-            oliveDatasetLoader0.load_and_resize(image, 'ROUND_4', 'val')
-    print("ROUND_4--> OK")
-
-
-
 
 
 if __name__ == '__main__':

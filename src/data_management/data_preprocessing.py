@@ -1,21 +1,8 @@
-#Codice per il Renaming dei file
-
 import os
 import shutil
 import random
-
 from src.data_management.data_acquisition import OliveDatasetLoader
 
-<<<<<<< HEAD
-def renameFile():
-    directory = os.path.abspath(r'C:\Users\gsfer\Desktop\only_olive_plus')
-    images_dir = os.path.join(directory, 'images')
-    labels_dir = os.path.join(directory, 'labels')
-
-    destDirectory = os.path.abspath(r'C:\Users\gsfer\Desktop\only_olive_plus\destDir')
-    destImagesDir = os.path.join(destDirectory, 'images')
-    destlblDir = os.path.join(destDirectory, 'labels')
-=======
 
 def renameFile(workingPath):
     directory = os.path.abspath(workingPath)
@@ -25,7 +12,6 @@ def renameFile(workingPath):
     destDirectory = os.path.abspath(workingPath)
     destImagesDir = os.path.join(destDirectory, 'Rimages')
     destlblDir = os.path.join(destDirectory, 'Rlabels')
->>>>>>> 71c7726a4d669d22e3d218b27c680fa01c3ec10b
 
     image_files = [f for f in os.listdir(images_dir) if f.endswith('.jpg')]
     label_files = [f for f in os.listdir(labels_dir) if f.endswith('.txt')]
@@ -45,12 +31,7 @@ def renameFile(workingPath):
 
         #splittedName = img_name.split("_") # Esempio di file: 0_olive.jpg oppure 0_tree.jpg
         #typeImg = str(splittedName[1]) # qui memorizzo solamente 'olive' oppure 'tree'
-<<<<<<< HEAD
-        typeImg = "olive"
-
-=======
         typeImg = 'olive'
->>>>>>> 71c7726a4d669d22e3d218b27c680fa01c3ec10b
         #if img_name.__contains__("_tree"):
         #    continue
 
@@ -62,22 +43,12 @@ def renameFile(workingPath):
         os.rename( os.path.join(labels_dir, label_files[i]), new_lbl_name)
         numeric_name += 2
         
-
-<<<<<<< HEAD
-def copyOnlyLabelsFromImages():
-    destinationDir = os.path.abspath(r'C:\Users\gsfer\Desktop\only_olive_plus\destDir')
-=======
 def copyOnlyLabelsFromImages(path):
     destinationDir = os.path.abspath(path)
->>>>>>> 71c7726a4d669d22e3d218b27c680fa01c3ec10b
     images_dest_dir = os.path.join(destinationDir, 'images')
     labels_dest_dir = os.path.join(destinationDir, 'labels')
 
-<<<<<<< HEAD
-    sourceDir = os.path.abspath(r'C:\Users\gsfer\Desktop\only_olive_plus')
-=======
     sourceDir = os.path.abspath(path)
->>>>>>> 71c7726a4d669d22e3d218b27c680fa01c3ec10b
     source_labels_dir = os.path.join(sourceDir, 'labels')
 
     image_files = [f for f in os.listdir(images_dest_dir) if f.endswith('.jpg')]
@@ -134,7 +105,6 @@ def changeClassInsideLabelsFile(correctClass, folderBase, subFolder):
             file.writelines(modified_lines) # Scrittura di una lista di strighe
     print(f"CorrectClass_OK --> {folderBase + '/' + subFolder}")
 
-
 def createShuffledKFold(sourcePath, destPath):
     # Il FULL_DATASET ha 3500 foto di cui 1000Alberi , 2500 Olive (Tecnicamente 1500Olive e 1000Olive+Chioma)
     # La distribuzione, visto che il modello riesce subito a riconoscere gli alberi, deve prevedere:
@@ -188,9 +158,7 @@ def createShuffledKFold(sourcePath, destPath):
             shutil.copy( os.path.join(labelsFullDatasetDir, treeFilename + ".txt"), os.path.join(fold_iDir, treeFilename + ".txt"))
             
         print(f"Fold {i}: {int(treeImagesNumber / 5)} Tree selected")   
-            #print(f"\tCopiato il file: {imagesOliveFullDataset[numero_casuale]} + {labelsOliveFullDataset[numero_casuale]}")
-        
-        
+            #print(f"\tCopiato il file: {imagesOliveFullDataset[numero_casuale]} + {labelsOliveFullDataset[numero_casuale]}")    
 
 def truncate(value, decimal_places = 6):
     factor = 10.0 ** decimal_places
@@ -221,7 +189,6 @@ def truncateBBoxesValues(baseDir, subFolder): # baseDir = r'C:\Users\Francesco\D
         
         print(f"Truncated correctly -> {label_file}")
         
-
 def getOliveCountFromLabelsFile(pathLabels):
     oliveCount = 0
     with open(pathLabels, 'r') as file:
@@ -245,31 +212,20 @@ def setOliveNumber(sourcePath):
             file.writelines(fileLine)
 
 
-
-
-
-if __name__ == '__main__':
-<<<<<<< HEAD
-    #copyOnlyLabelsFromImages()
-    renameFile()
-    #addCrownBBox()
-    #changeIDLablesOlive()
-
-    #createShuffledKFold()
-=======
+def module_tester():
+    # Code for test functions of the module, an example below for load_and_resize
+    
     #copyOnlyLabelsFromImages(r'C:\Users\Francesco\Desktop\DatasetAggiuntivoChioma+Olive_train')
     #addCrownBBox(r'C:\Users\Francesco\Desktop\DatasetAggiuntivo Chioma+Olive_valid')
     #renameFile(r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest')
-
     #createShuffledKFold(r'C:\Users\Francesco\Desktop\full_dataset', r'C:\Users\Francesco\Desktop\KFoldEquallyDistr')
-
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\full_dataset', 'labels')
-    
-    #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'train')
-    
+    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\full_dataset', 'labels')    
+    #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'train') 
     #changeClassInsideLabelsFile(2, r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest', 'labels')
-
     setOliveNumber(r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest\images')
 
->>>>>>> 71c7726a4d669d22e3d218b27c680fa01c3ec10b
     print("OK")
+
+
+if __name__ == '__main__':
+    module_tester()
