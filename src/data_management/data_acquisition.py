@@ -110,7 +110,6 @@ class OliveDatasetLoader(Dataset):
 def module_tester():
 
     # Code for test functions of the module, an example below for load_and_resize
-
     oliveDatasetLoader0 = OliveDatasetLoader(r'C:\Users\Francesco\Desktop\visualize\ROUND_0')
     imageList = oliveDatasetLoader0._load_data('train')
     imageList.sort()
