@@ -87,13 +87,20 @@ def main():
 
         # Aggiunge il conteggio stimato
         count = count_olives(imagePath, model)
-        print(f"Numero di olive in {images}: {count} ")
+        print(f"Numero di olive PREDETTE per {images}: {count} ")
         predicted_counts.append(count)
 
-        # Qua bisogna inserire il vero conteggio delle olive per ogni immagine
-        # ToDo: Brainstorming con Fra
-        true_count = ...  # Da definire
-        true_counts.append(true_count)
+        # nome del file txt corrispondente
+        txt_file = os.path.splitext(imagePath)[0] + ".txt"
+
+        # Lettura conteggio reale delle olive dal file txt
+        if os.path.exists(txt_file):
+            with open(txt_file, 'r') as file:
+                true_count = int(file.read().strip())
+                print(f"Numero di olive REALI per {images}: {count} ")
+                true_counts.append(true_count)
+        else:
+            print(f"Warning: {txt_file} non trovato, salto il calcolo del true count per questa immagine")
 
     # Calcola MSE e deviazione standard
     mse, std_dev = compute_mse_and_devStd(true_counts, predicted_counts)
