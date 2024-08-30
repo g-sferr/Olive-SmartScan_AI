@@ -1,5 +1,5 @@
 
-# Olive-SmartScan_AI: An Object Detection-Based Counting System for both On-Tree and Off-Tree Olives
+# Olive-SmartScan_AI: An Object Detection-Based Counting System for both *On-Tree* and *Off-Tree* Olives
 
 Intelligent Systems Project at University of Pisa - MSc Computer Engineering
 
@@ -99,7 +99,7 @@ These modules are designed to provide an accurate assessment of the model's perf
 ```
 ## Documentation Report
 
-You can find out more details about our work on this project by reading the final *Paper* on the [Olive-SmartScan_AI: An Object Detection-Based Counting System for both On-Tree and Off-Tree Olives](/docs/paper.pdf)
+You can find more details about our work related to this project by reading the **Paper** we appropriately wrote to summarize it by clicking on this link [Olive-SmartScan_AI: An Object Detection-Based Counting System for both On-Tree and Off-Tree Olives](/docs/paper.pdf).
 
 ## Authors
 
