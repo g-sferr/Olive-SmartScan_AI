@@ -36,13 +36,13 @@ PyTorch is an open-source library for machine learning and deep learning, useful
 
 ## Training and Testing
 
-### Model Training
-To train the models, refer to the Jupyter Notebook named *train_val-jupyter_nb*located in the `src/training_detection_model` folder. This notebook contains the instructions and code needed to train the models with the provided data.
+### Detection-Model Training and Validation
+To train the models in Cross-Validation, refer to the Jupyter Notebook named *train_val-jupyter_nb*located in the `src/training_detection_model` folder. This notebook contains the instructions and code needed to train the models with the provided data.
 
 **Note:** During our project, we performed the training on a specific kernel associated with a virtual machine provided by the university. This virtual machine was equipped with high-performance remote resources, which helped reduce training times and improve overall efficiency. Make sure to configure your execution environment to use adequate resources to achieve optimal results.
 
 ### System Testing
-To run and test the system, the main modules to refer to are:
+To run and test the system in overall, the main modules to refer to are:
 
 - **`evaluate_counting_on_tree`**: Located in the `src/inference` folder, this module is responsible for evaluating the count of olives on trees using the trained models.
 - **`evaluate_counting_out_tree`**: Also in the `src/inference` folder, this module evaluates the count of olives off trees, providing further analysis of the results.
