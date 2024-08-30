@@ -1,9 +1,20 @@
-import os
+import os # For os operation
 import cv2 # For image processing and OpenCV functionalities
 import matplotlib.pyplot as plt
 
 
-# ############ BEGIN-Object Detection Seminar Code ############
+# ******************** BEGIN-Object Detection Seminar Code ********************
+
+"""
+The following code, located between the comments "BEGIN-Object Detection Seminar Code" and
+"END-Object Detection Seminar Code", serves as supplementary support for various visualization
+techniques used during the experimental phase.
+
+Please note that the intellectual property rights for this code belong to Engineer Miglionico,
+who provided it during the Object Detection seminar held as part of the Intelligent Systems course
+at the University of Pisa.
+
+"""
 
 def conta_istanze_darknet(file_path):
     istanze = {}  # Dictionary to store the counts of instances
@@ -156,9 +167,20 @@ def process_directory(directory, class_map):
             if not continue_processing:
                 break
 
-# ############ END-Object Detection Seminar Code ############
+# ******************** END-Object Detection Seminar Code ********************
+
 
 def plot_errors(true_counts, predicted_counts):
+    """
+    Plots a histogram of the errors between true counts and predicted counts.
+
+    Parameters:
+    - true_counts: List of actual counts.
+    - predicted_counts: List of predicted counts by the model.
+
+    The function calculates the error for each pair of true and predicted counts,
+    and then plots the distribution of these errors using a histogram.
+    """
     errors = [true - pred for true, pred in zip(true_counts, predicted_counts)]
     plt.hist(errors, bins=30, alpha=0.7, color='blue', edgecolor='black')
     plt.xlabel('Error (True Count - Predicted Count)')
@@ -167,7 +189,18 @@ def plot_errors(true_counts, predicted_counts):
     plt.show()
 
 def draw_bbox_from_model(imageCV2, class_id, box, class_map):
-    
+    """
+    Draws a bounding box on an image with a label indicating the class.
+
+    Parameters:
+    - imageCV2: The image on which to draw the bounding box (in OpenCV format).
+    - class_id: The ID of the class for this bounding box.
+    - box: A tuple containing normalized coordinates (x_min, y_min, x_max, y_max).
+    - class_map: A dictionary mapping class IDs to class names.
+
+    The function converts normalized bounding box coordinates to pixel coordinates
+    and then draws the box on the image with the corresponding class label.
+    """
     image_height, image_width = imageCV2.shape[:2]
     normalized_x_min, normalized_y_min, normalized_x_max, normalized_y_max = box
 
@@ -181,7 +214,7 @@ def draw_bbox_from_model(imageCV2, class_id, box, class_map):
     cv2.rectangle(imageCV2, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
     # Add the class name label above the bounding box
     font = cv2.FONT_HERSHEY_SIMPLEX
-    cv2.putText(imageCV2, class_map.get(class_id, f'classe{class_id}'),
+    cv2.putText(imageCV2, class_map.get(class_id, f'class{class_id}'),
                 (x_min, y_min - 10), font, 0.6, (0, 255, 0), 2)
 
 def module_tester():
