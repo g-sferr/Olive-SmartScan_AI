@@ -5,43 +5,65 @@ import torch
 import torchvision
 from tqdm import tqdm
 
-# Esempio di dataset personalizzato
 class OliveDatasetLoader(Dataset):
+    """Loader for the Olive Dataset, handling images and their corresponding bounding boxes."""
+
     def __init__(self, data_dir):
+        """Initializes the OliveDatasetLoader with the given data directory.
+        
+        Args:
+            data_dir (str): The directory where the dataset is stored.
+        """
         self.data_dir = data_dir
-        self.images = [] # images e bboxes sono due vettori Paralleli
-        self.bboxes = [] # Quindi bboxes è NECESSARIAMENTE un vettore di vettori (ogni immagine può avere più boundingBoxes)
+        self.images = []  # List of images in the dataset
+        self.bboxes = []  # List of bounding boxes corresponding to each image
         # self.confs = []
         #self._load_data()
 
     def _load_data(self, subFolder):
+        """Loads image file names from the specified subfolder.
+        
+        Args:
+            subFolder (str): The subfolder within the dataset directory containing the images.
+        
+        Returns:
+            list: A list of image file names in the specified subfolder.
+        """
         base_dir = os.path.abspath(self.data_dir)
         images_dir = os.path.join(base_dir, subFolder)
-        #labels_dir = os.path.join(base_dir, 'labels')
-
         image_files = [f for f in os.listdir(images_dir) if f.endswith('.jpg') or f.endswith('.png')]
         return image_files
+    
         '''
-        total_images = len(image_files)
+            total_images = len(image_files)
+            
+            # Usa tqdm per la progress bar
+            for image_file in tqdm(image_files, desc="Loading dataset", unit="image"):
+                    image_path = os.path.join(images_dir, image_file)
+                    labels_file = os.path.join(labels_dir, os.path.splitext(image_file)[0] + '.txt')
+
+                    # Carica l'immagine
+                    image = Image.open(image_path).convert('RGB')
+                    image = self._transform_image(image)
+                    self.images.append(image)
+
+                    # Carica l'annotazione
+                    #print(f"NomeFile-> {image_file}")
+                    bboxes = self._load_labels(labels_file) # Carico le labels di quella specifica immagine
+                    self.bboxes.append(bboxes)
+                    # self._class.append(_class)
+        '''
+
+    def _load_labels(self, subFolder, fileName):
+        """Loads bounding boxes and classes from a label file.
         
-        # Usa tqdm per la progress bar
-        for image_file in tqdm(image_files, desc="Loading dataset", unit="image"):
-                image_path = os.path.join(images_dir, image_file)
-                labels_file = os.path.join(labels_dir, os.path.splitext(image_file)[0] + '.txt')
-
-                # Carica l'immagine
-                image = Image.open(image_path).convert('RGB')
-                image = self._transform_image(image)
-                self.images.append(image)
-
-                # Carica l'annotazione
-                #print(f"NomeFile-> {image_file}")
-                bboxes = self._load_labels(labels_file) # Carico le labels di quella specifica immagine
-                self.bboxes.append(bboxes)
-                # self._class.append(_class)
-        '''
-
-    def _load_labels(self, subFolder, fileName): # Dato un file, ritorna la lista delle classi e la lista delle bboxes in quel file
+        Args:
+            subFolder (str): The subfolder containing the label file.
+            fileName (str): The name of the label file.
+        
+        Returns:
+            tuple: A tuple containing a tensor of classes and a tensor of bounding boxes.
+        """
         bboxes = []
         classes = []
 
@@ -58,14 +80,22 @@ class OliveDatasetLoader(Dataset):
                     break
                 bboxes.append([int(_class), x1, y1, w, h])
                 classes.append(_class)
-                # _class.append(conf)
             if noLine:
                 print(f"noLine --> {fileName}")
 
-        return torch.tensor(classes, dtype=torch.int16), torch.tensor(bboxes, dtype=torch.float16) # torch.tensor(_class, dtype=torch.float32)
+        return torch.tensor(classes, dtype=torch.int16), torch.tensor(bboxes, dtype=torch.float16)
 
     def _transform_image(self, image):
-        # Trasforma l'immagine (ridimensionamento, normalizzazione, ecc.)
+        """Transforms the image for input into a neural network.
+        
+        The image is resized to 640x640, converted to a tensor, and normalized.
+        
+        Args:
+            image (PIL.Image): The image to be transformed.
+        
+        Returns:
+            torch.Tensor: The transformed image.
+        """
         transform = torchvision.transforms.Compose([
             torchvision.transforms.Resize((640, 640)),
             torchvision.transforms.ToTensor(),
@@ -74,16 +104,34 @@ class OliveDatasetLoader(Dataset):
         return transform(image)
 
     def __len__(self):
+        """Returns the number of images in the dataset.
+        
+        Returns:
+            int: The number of images.
+        """
         return len(self.images)
 
     def __getitem__(self, idx):
+        """Returns an image and its corresponding bounding boxes.
+        
+        Args:
+            idx (int): The index of the image and bounding boxes to retrieve.
+        
+        Returns:
+            tuple: A tuple containing the image and its bounding boxes.
+        """
         image = self.images[idx]
         bbox = self.bboxes[idx]
-        # conf = self.confs[idx]
-        return image, bbox # conf
+        return image, bbox
 
     def load_and_resize(self, imageNameFile, sourceFolder, subFolder):
-
+        """Loads and resizes an image if its dimensions are not already 640x640.
+        
+        Args:
+            imageNameFile (str): The name of the image file to resize.
+            sourceFolder (str): The folder where the original image is located.
+            subFolder (str): The subfolder within the source folder.
+        """
         image_path = r'C:/Users/Francesco/Desktop/visualize/' + sourceFolder + '/' + subFolder + '/' + imageNameFile
         image = Image.open(image_path)
 
@@ -99,6 +147,14 @@ class OliveDatasetLoader(Dataset):
         resized_image.save(r'C:/Users/Francesco/Desktop/visualize/resized/' + sourceFolder + '/' + subFolder + '/' + imageNameFile)
 
     def getTrueOliveCount(self, pathLabels):
+        """Reads the true count of olives from a label file.
+        
+        Args:
+            pathLabels (str): The path to the label file containing the olive count.
+        
+        Returns:
+            int: The actual count of olives as indicated in the label file.
+        """
         oliveCount = 0
         with open(pathLabels, 'r') as file:
             oliveCount = int(file.read().strip())
@@ -108,8 +164,7 @@ class OliveDatasetLoader(Dataset):
 
 
 def module_tester():
-
-    # Code for test functions of the module, an example below for load_and_resize
+    """Tests the module's functions, including loading and resizing images."""
     oliveDatasetLoader0 = OliveDatasetLoader(r'C:\Users\Francesco\Desktop\visualize\ROUND_0')
     imageList = oliveDatasetLoader0._load_data('train')
     imageList.sort()
