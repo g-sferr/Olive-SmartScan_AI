@@ -1,17 +1,33 @@
-# K-Fold Cross-Validation - K = 5
+## Training and Evaluation Using `train_val-jupyter_nb.ipynb`
 
-## DATASET: (1000 Olives + 1000 Trees) 2000 images --> divided into K = 5 folders (0,1,2,3,4) --> 400 images per folder #
+The file `train_val-jupyter_nb.ipynb` has been used extensively in the project for training and evaluating different versions of the YOLOv8 models. Below is a detailed overview of its use:
 
-- Construction of fold_i in "folders" (i=K):
+### Training of YOLOv8 Models
 
-    **fold_i** = len(dataset_1)/i + len(dataset_2)/i ---> 400 images
+- **Purpose:** The notebook was utilized to train various versions of the YOLOv8 framework using Cross-Validation. This approach ensures that each model is trained and validated across different subsets of the dataset, which helps in assessing its performance more robustly.
+- **Process:** The notebook includes code for:
+  - Loading the dataset and preparing it for training.
+  - Configuring different YOLOv8 model versions (YOLOv8n, YOLOv8s, YOLOv8m, YOLOv8l, YOLOv8) for training.
+  - Executing training sessions with Cross-Validation to ensure each model's performance is evaluated across different data splits.
 
-    Steps (for each single dataset):
-    1. Shuffle the dataset from which you want to extract the *number of images* to be inserted into each *fold_i.*
-    2. *Select* the number of images of interest (in our case 200).
-    3. Insert the images and their corresponding *labels.txt* files into the *fold_i* folder.
+### Performance Metrics Extraction
 
-    _Repeat for each dataset_i and fold_i if you have separate datasets of different classes._
+- **Purpose:** Besides training, the notebook was also used to extract and analyze performance metrics for each model version.
+- **Metrics:** The following metrics were evaluated:
+  - Precision
+  - Recall
+  - F1-Score
+  - mAP@50
+- **Process:** The notebook provides scripts to:
+  - Extract relevant performance metrics after training each model.
+  - Compare these metrics across different YOLOv8 model versions.
 
-At the end, in our case, you will have 5 *fold_i* folders (i=0,...,4) containing 200 olive images and 200 tree images with their respective labels, so the total for each fold is 800 elements.
+### Model Selection
+
+- **Objective:** Based on the extracted metrics, the best-performing model was selected for our specific application, which involves detecting olives both on trees and off trees. This step is explained in detail in the relevant “Experimentla Results” section of the paper containing the details of our study found in the “docs” folder
+- **Process:** The notebook facilitated:
+  - Comparing the performance of various YOLOv8 models.
+  - Selecting the model with the highest accuracy and best performance metrics for the task of Olive On-Tree and Off-Tree detection.
+
+This notebook is crucial for understanding how each YOLOv8 model version performs and aids in selecting the most suitable model for our detection goals.
 
