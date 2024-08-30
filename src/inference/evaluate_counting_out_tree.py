@@ -14,7 +14,7 @@ def main():
     oliveSenzaCrownLoader = oliveDatasetLoader._load_data(subFolder2)
 
     # Carica il modello YOLO pre-addestrato
-    model = YOLO(r'C:\Users\Francesco\Desktop\Final_Trained_Models\2_YOLOv8 Small\Best_YOLOv8_S.pt')
+    model = YOLO(r'C:\Users\Francesco\Desktop\Final_Trained_Models\5_YOLOv8 XLarge\Best_YOLOv8_X.pt')
 
     pred_olives_out_tree = []
     true_olives_out_tree = []
