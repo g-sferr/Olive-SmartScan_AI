@@ -37,7 +37,7 @@ PyTorch is an open-source library for machine learning and deep learning, useful
 ## Training and Testing
 
 ### Detection-Model Training and Validation
-To train the models in Cross-Validation, refer to the Jupyter Notebook named *train_val-jupyter_nb*located in the `src/training_detection_model` folder. This notebook contains the instructions and code needed to train the models with the provided data.
+To train the models in Cross-Validation, refer to the Jupyter Notebook named *train_val-jupyter_nb* located in the `src/training_detection_model` folder. This notebook contains the instructions and code needed to train the models with the provided data.
 
 **Note:** During our project, we performed the training on a specific kernel associated with a virtual machine provided by the university. This virtual machine was equipped with high-performance remote resources, which helped reduce training times and improve overall efficiency. Make sure to configure your execution environment to use adequate resources to achieve optimal results.
 
@@ -84,7 +84,7 @@ These modules are designed to provide an accurate assessment of the model's perf
 │       ├───images
 │       └───labels
 ├───docs
-│   └───Paper-Olive-SmartScani_AI-ENG
+│   └───Paper-Olive-SmartScan_AI-[Gaetano Sferrazza, Francesco Bruno]-(ENG).pdf
 ├───final_models
 │   └───checkpoints
 │       ├───1_YOLOv8 Nano
@@ -99,7 +99,7 @@ These modules are designed to provide an accurate assessment of the model's perf
 ```
 ## Documentation Report
 
-You can find more details about our work related to this project by reading the **Paper** we appropriately wrote to summarize it by clicking on this link [Olive-SmartScan_AI: An Object Detection-Based Counting System for both On-Tree and Off-Tree Olives](/docs/paper.pdf).
+You can find more details about our work related to this project by reading the **Paper** we appropriately wrote to summarize it by clicking on this link [Olive-SmartScan_AI: An Object Detection-Based Counting System for both On-Tree and Off-Tree Olives](/docs/Paper-Olive-SmartScan_AI-[Gaetano Sferrazza, Francesco Bruno]-(ENG).pdf).
 
 ## Authors
 
