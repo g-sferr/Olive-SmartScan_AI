@@ -229,7 +229,7 @@ def module_tester():
         2: "olive"
     }
     # Path to the directory containing the images and label files
-    directory_path = r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest\images'
+    directory_path = r'C:/path/with/image/and/labels/file'
     # Start processing the directory
     process_directory(directory_path, class_map)
     
@@ -237,7 +237,7 @@ def module_tester():
     # ***** Counting of Classes *****
 
     # Path to the directory containing the dataset
-    #cartella_dataset = r"C:\Users\Francesco\Desktop\tempDatasetOlive\FotoDiProvaModelloX"
+    #cartella_dataset = r"C:/path/with/image/and/labels/file"
  
     #if os.path.exists(cartella_dataset):
     #    analizza_cartella(cartella_dataset)  # Analyzing the dataset directory and counting classes

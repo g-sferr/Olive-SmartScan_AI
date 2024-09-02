@@ -210,7 +210,7 @@ def truncate(value, decimal_places=6):
     return int(value * factor) / factor
 
 
-def truncateBBoxesValues(baseDir, subFolder): # baseDir = r'C:\Users\Francesco\Desktop\visualize\ROUND_0', subFolder = 'train'
+def truncateBBoxesValues(baseDir, subFolder):
     """Truncates the values of bounding boxes in label files to a specified precision.
     
     Args:
@@ -281,14 +281,7 @@ def setOliveNumber(sourcePath):
 def module_tester():
     # Code for test functions of the module, an example below for load_and_resize
     
-    #copyOnlyLabelsFromImages(r'C:\Users\Francesco\Desktop\DatasetAggiuntivoChioma+Olive_train')
-    #addCrownBBox(r'C:\Users\Francesco\Desktop\DatasetAggiuntivo Chioma+Olive_valid')
-    #renameFile(r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest')
-    #createShuffledKFold(r'C:\Users\Francesco\Desktop\full_dataset', r'C:\Users\Francesco\Desktop\KFoldEquallyDistr')
-    #changeClassInsideLabelsFile(0, r'C:\Users\Francesco\Desktop\full_dataset', 'labels')    
-    #truncateBBoxesValues(r'C:\Users\Francesco\Desktop\visualize\ROUND_0', 'train') 
-    #changeClassInsideLabelsFile(2, r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest', 'labels')
-    setOliveNumber(r'C:\Users\Francesco\Desktop\tempDatasetOlive\countingTest\images')
+    setOliveNumber(r'C:/path/with/image/and/labels/file')
 
     print("OK")
 

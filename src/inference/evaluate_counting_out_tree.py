@@ -13,13 +13,13 @@ def main():
     count olives outside of trees, compares predicted counts with actual counts,
     and calculates the Mean Squared Error (MSE) and standard deviation.
     """
-    data_dir = r'C:\Users\Francesco\Desktop\countingTest\TrueCount'
+    data_dir = r'C:/path/with/image/and/labels/for/GroundTruth/TrueCount'
     oliveDatasetLoader = OliveDatasetLoader(data_dir)
     subFolder2 = 'oliveSenzaCrown'
     oliveSenzaCrownLoader = oliveDatasetLoader._load_data(subFolder2)
 
     # Load the pre-trained YOLO model
-    model = YOLO(r'C:\Users\Francesco\Desktop\Final_Trained_Models\2_YOLOv8 Small\Best_YOLOv8_S.pt')
+    model = YOLO(r'C:/path/containing/pre-trained/detection-model/model_name.pt')
 
     pred_olives_out_tree = []
     true_olives_out_tree = []
@@ -36,7 +36,7 @@ def main():
         true_olive_count = oliveDatasetLoader.getTrueOliveCount(os.path.join(data_dir + '\\' + subFolder2, str(image).replace(".jpg", "Count.txt")))
         true_olives_out_tree.append(true_olive_count)
 
-        print(f"{image} SENZA -> | Olive pred Out Tree: {pred_olive_out_tree} | Olive REALI: {true_olive_count}")
+        print(f"{image} Olive predicted Off-Tree: {pred_olive_out_tree} | Olive's Actual Number: {true_olive_count}")
         
         # Uncomment below lines to visualize the bounding boxes using cv2
         # cv2.imshow(imagePath, imageCV2)

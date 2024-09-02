@@ -132,7 +132,7 @@ class OliveDatasetLoader(Dataset):
             sourceFolder (str): The folder where the original image is located.
             subFolder (str): The subfolder within the source folder.
         """
-        image_path = r'C:/Users/Francesco/Desktop/visualize/' + sourceFolder + '/' + subFolder + '/' + imageNameFile
+        image_path = r'C:/path/with/image/to/be/resized' + sourceFolder + '/' + subFolder + '/' + imageNameFile
         image = Image.open(image_path)
 
         orig_size = image.size
@@ -144,7 +144,7 @@ class OliveDatasetLoader(Dataset):
         resize_transform = torchvision.transforms.Resize((640, 640))
         resized_image = resize_transform(image)
 
-        resized_image.save(r'C:/Users/Francesco/Desktop/visualize/resized/' + sourceFolder + '/' + subFolder + '/' + imageNameFile)
+        resized_image.save(r'C:/path/where/put/the/image/resized/' + sourceFolder + '/' + subFolder + '/' + imageNameFile)
 
     def getTrueOliveCount(self, pathLabels):
         """Reads the true count of olives from a label file.
@@ -165,7 +165,7 @@ class OliveDatasetLoader(Dataset):
 
 def module_tester():
     """Tests the module's functions, including loading and resizing images."""
-    oliveDatasetLoader0 = OliveDatasetLoader(r'C:\Users\Francesco\Desktop\visualize\ROUND_0')
+    oliveDatasetLoader0 = OliveDatasetLoader(r'C:/path/with/image/to/be/resized')
     imageList = oliveDatasetLoader0._load_data('train')
     imageList.sort()
 
