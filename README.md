@@ -59,6 +59,7 @@ These modules are designed to provide an accurate assessment of the model's perf
 │   │   │   ├───fold_2
 │   │   │   ├───fold_3
 │   │   │   └───fold_4
+│   │   │
 │   │   └───rounds
 │   │       ├───ROUND_0
 │   │       │   ├───test
@@ -80,11 +81,18 @@ These modules are designed to provide an accurate assessment of the model's perf
 │   │           ├───test
 │   │           ├───train
 │   │           └───val
+│   │
+│   ├───evaluation_datasets
+│   │   ├───oliveOff-Tree
+│   │   └───oliveOn-Tree
+│   │
 │   └───full_dataset
 │       ├───images
 │       └───labels
+│
 ├───docs
 │   └───Paper-Olive-SmartScan_AI-(ENG).pdf
+│
 ├───final_models
 │   └───checkpoints
 │       ├───1_YOLOv8 Nano
