@@ -44,8 +44,8 @@ To train the models in Cross-Validation, refer to the Jupyter Notebook named *tr
 ### System Testing
 To run and test the system in overall, the main modules to refer to are:
 
-- **`evaluate_counting_on_tree`**: Located in the `src/inference` folder, this module is responsible for evaluating the count of olives on trees using the trained models.
-- **`evaluate_counting_out_tree`**: Also in the `src/inference` folder, this module evaluates the count of olives off trees, providing further analysis of the results.
+- **`evaluate_counting_on_tree`**: Located in the `src/inference` folder, this module is responsible for evaluating the count of olives on trees using the trained models, providing further analysis of the results.
+- **`evaluate_counting_out_tree`**: Also in the `src/inference` folder, this module evaluates the count of olives off trees using the trained models, providing further analysis of the results.
 
 These modules are designed to provide an accurate assessment of the model's performance and to test the system in realistic scenarios.
 
