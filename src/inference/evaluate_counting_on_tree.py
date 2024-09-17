@@ -1,4 +1,5 @@
 import os
+import cv2
 import numpy as nn
 from ultralytics import YOLO
 from src.data_management.data_visualization import plot_errors
