@@ -91,7 +91,8 @@ These modules are designed to provide an accurate assessment of the model's perf
 │       └───labels
 │
 ├───docs
-│   └───Paper-Olive-SmartScan_AI-(ENG).pdf
+│   ├───Paper_Report
+│   └───PowerPoint_Presentation
 │
 ├───final_models
 │   └───checkpoints
@@ -107,7 +108,7 @@ These modules are designed to provide an accurate assessment of the model's perf
 ```
 ## Documentation Report
 
-You can find more details about our work related to this project by reading the **Paper** we appropriately wrote to summarize it by clicking on this link [Olive-SmartScan_AI: An Object Detection-Based Counting System for both On-Tree and Off-Tree Olives](/docs/Paper-Olive-SmartScan_AI-(ENG).pdf).
+You can find more details about our work related to this project by reading the **Paper** we appropriately wrote to summarize it by clicking on this link [Olive-SmartScan_AI: An Object Detection-Based Counting System for both On-Tree and Off-Tree Olives](/docs/Paper_Report/Paper-Olive-SmartScan_AI-(ENG).pdf).
 
 ## Authors
 
